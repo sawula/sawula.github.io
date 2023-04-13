@@ -1,0 +1,928 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>1 Introduction &#8212; Poolish v0</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="FIFA22 players exploration" href="L%2004b%20FIFA%2022.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/poolish_320.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Poolish v0</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Welcome to Data Science
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="markdown.html">
+   Markdown Files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="notebooks.html">
+   Content with notebooks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="markdown-notebooks.html">
+   Notebooks with MyST Markdown
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="L%2001a%20NYC%20ER.html">
+   0 First things first!
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="L%2001b%20NYC%20ER.html">
+   1 A follow-up question
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="L%2002a%20JHU%20covid.html">
+   1 Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="L%2002b%20JHU%20hw.html">
+   Your turn
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="L%2004b%20FIFA%2022.html">
+   FIFA22 players exploration
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   1 Introduction
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/L 05_Resumes.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2FL 05_Resumes.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/L 05_Resumes.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   1 Introduction
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#overview-causality">
+     1.1 Overview - Causality
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#are-emily-and-greg-more-employable-than-lakisha-and-jamal">
+     1.2 “Are Emily and Greg more employable than Lakisha and Jamal?”
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#imports">
+   2 Imports
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#analyzing-the-data">
+   3 Analyzing the data
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reading-it-in">
+     3.1 Reading it in
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#resumes-counts-w-quiz">
+     3.2
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       resumes
+      </span>
+     </code>
+     counts…  (w QUIZ)
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#via-value-counts">
+       3.2.1 …via
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         value_counts()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#via-pivot-table">
+       3.2.2 …via
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         pivot_table()
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#analyzing-the-overall-results">
+     3.3 Analyzing the overall results
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-results-by-name">
+     3.4 The results by name
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#something-to-ponder">
+     3.5 Something to ponder
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#you-try-it">
+   4 You try it!
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>1 Introduction</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   1 Introduction
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#overview-causality">
+     1.1 Overview - Causality
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#are-emily-and-greg-more-employable-than-lakisha-and-jamal">
+     1.2 “Are Emily and Greg more employable than Lakisha and Jamal?”
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#imports">
+   2 Imports
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#analyzing-the-data">
+   3 Analyzing the data
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reading-it-in">
+     3.1 Reading it in
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#resumes-counts-w-quiz">
+     3.2
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       resumes
+      </span>
+     </code>
+     counts…  (w QUIZ)
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#via-value-counts">
+       3.2.1 …via
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         value_counts()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#via-pivot-table">
+       3.2.2 …via
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         pivot_table()
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#analyzing-the-overall-results">
+     3.3 Analyzing the overall results
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-results-by-name">
+     3.4 The results by name
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#something-to-ponder">
+     3.5 Something to ponder
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#you-try-it">
+   4 You try it!
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <p>Adapted and extended from Sections 2.1, 2.2, &amp; 2.3 of Imai, Kosuke (2017). <em>Quantitative
+Social Science: An Introduction.</em> Princeton, NJ: Princeton University Press.</p>
+<section class="tex2jax_ignore mathjax_ignore" id="introduction">
+<h1>1 Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h1>
+<section id="overview-causality">
+<h2>1.1 Overview - Causality<a class="headerlink" href="#overview-causality" title="Permalink to this heading">#</a></h2>
+<p>The sciences, whether physical, life, or social, aim to capture the causal workings of the world.</p>
+<ul class="simple">
+<li><p>Does this particular vaccine prevent infection?</p></li>
+<li><p>Which get-out-the-vote efforts are most impactful on voter turnout?</p></li>
+<li><p>Does the introduction of a catalyst increase the rate of a chemical reaction?</p></li>
+</ul>
+<p>To establish causation, scientists often conduct experiments comparing results in the presence and absence of potential causes.</p>
+<p>In this sequence of lessons, we begin with a superficial analysis of data from a very famous social science experiment.  Reflection will lead us to ask a deeper question about these results and lead us to our next topic.</p>
+<p>For the most part we will use the same Python commands we used in previous notebooks.  The one addition will be the Pandas dataframe method <code class="docutils literal notranslate"><span class="pre">pivot_table()</span></code>.</p>
+</section>
+<section id="are-emily-and-greg-more-employable-than-lakisha-and-jamal">
+<h2>1.2 “Are Emily and Greg more employable than Lakisha and Jamal?”<a class="headerlink" href="#are-emily-and-greg-more-employable-than-lakisha-and-jamal" title="Permalink to this heading">#</a></h2>
+<p>That is the title of a well-known study published in 2004 by Marianne Bertrand and Sendhil Mullainathan in the <em>American Economic Review</em>, vol. 94, pp. 991-1013.  You can read a pdf of it <a class="reference external" href="https://www.aeaweb.org/articles?id=10.1257/0002828042002561">here</a>.  On <a class="reference external" href="https://scholar.google.com/scholar?hl=en&amp;as_sdt=0%2C31&amp;q=lakisha+and+jamal&amp;oq=lakis">Google Scholar</a>, you can see that this article has been cited over 5300 times!</p>
+<p>The <strong>first 32 seconds</strong> of this video give you a quick snapshot of the study.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">YouTubeVideo</span>
+<span class="n">YouTubeVideo</span><span class="p">(</span><span class="s1">&#39;fTcSVQJ2h8g?start=0&amp;end=32&amp;autoplay=0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<iframe
+    width="400"
+    height="300"
+    src="https://www.youtube.com/embed/fTcSVQJ2h8g?start=0&end=32&autoplay=0"
+    frameborder="0"
+    allowfullscreen
+
+></iframe>
+</div></div>
+</div>
+<p>The first part of the journal article’s abstract:</p>
+<blockquote>
+<div><p>We perform a field experiment to measure racial discrimination in the labor market. We respond
+with fictitious resumes to help-wanted ads in Boston and Chicago newspapers. To manipulate
+perception of race, each resume is assigned either a very African American sounding name or a very
+White sounding name. The results show significant discrimination against African-American
+names: White names receive 50 percent more callbacks for interviews. …</p>
+</div></blockquote>
+<p>Let’s look at some of the data.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="imports">
+<h1>2 Imports<a class="headerlink" href="#imports" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">altair</span> <span class="k">as</span> <span class="nn">alt</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">folders</span><span class="o">/</span><span class="n">rv</span><span class="o">/</span><span class="n">rrn8gdqd0hx365y8ph79pvlh0000gn</span><span class="o">/</span><span class="n">T</span><span class="o">/</span><span class="n">ipykernel_34324</span><span class="o">/</span><span class="mf">298601779.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">altair</span> <span class="k">as</span> <span class="nn">alt</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;altair&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="analyzing-the-data">
+<h1>3 Analyzing the data<a class="headerlink" href="#analyzing-the-data" title="Permalink to this heading">#</a></h1>
+<p>A susbset of the experimental data is available in Kosuke Imai’s github repo for his book <em>Quantitative Social Science: An Introduction</em>.</p>
+<p>For this data set the fields are:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Variable</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+<th class="head"><p><strong>Values</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">firstname</span></code></p></td>
+<td><p>first name of the fictitious job applicant</p></td>
+<td><p>Ex: <code class="docutils literal notranslate"><span class="pre">Jamal</span> <span class="pre">Jones</span></code>, <code class="docutils literal notranslate"><span class="pre">Emily</span> <span class="pre">Baker</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sex</span></code></p></td>
+<td><p>sex of applicant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">female</span></code> or <code class="docutils literal notranslate"><span class="pre">male</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">race</span></code></p></td>
+<td><p>race of applicant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">black</span></code> or <code class="docutils literal notranslate"><span class="pre">white</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">call</span></code></p></td>
+<td><p>whether a callback was made</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code>=yes, <code class="docutils literal notranslate"><span class="pre">0</span></code>=no</p></td>
+</tr>
+</tbody>
+</table>
+<section id="reading-it-in">
+<h2>3.1 Reading it in<a class="headerlink" href="#reading-it-in" title="Permalink to this heading">#</a></h2>
+<p>To read it in:</p>
+<ul class="simple">
+<li><p>go to Kosuke Imai’s github repo <a class="reference external" href="https://github.com/kosukeimai/qss/tree/master/CAUSALITY">here</a></p></li>
+<li><p>find the file labeled <code class="docutils literal notranslate"><span class="pre">resume.csv</span></code></p></li>
+<li><p>copy the link for the <code class="docutils literal notranslate"><span class="pre">RAW</span></code> version</p></li>
+<li><p>use the command <code class="docutils literal notranslate"><span class="pre">pd.read_csv()</span></code></p></li>
+<li><p>read it into a dataframe named <code class="docutils literal notranslate"><span class="pre">resumes</span></code></p></li>
+</ul>
+</section>
+<section id="resumes-counts-w-quiz">
+<h2>3.2  <code class="docutils literal notranslate"><span class="pre">resumes</span></code> counts…  (w QUIZ)<a class="headerlink" href="#resumes-counts-w-quiz" title="Permalink to this heading">#</a></h2>
+<p>Complete the tasks in the next two subsections and then answer the  questions in Canvas quiz <em>QUIZ 05: Resumes A</em>.</p>
+<section id="via-value-counts">
+<h3>3.2.1 …via <code class="docutils literal notranslate"><span class="pre">value_counts()</span></code><a class="headerlink" href="#via-value-counts" title="Permalink to this heading">#</a></h3>
+<p>You can answer the following questions using <code class="docutils literal notranslate"><span class="pre">value_counts()</span></code>.  Just run it on a column using either</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dataframe['column_name'].value_counts()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataframe.column_name.value_counts()</span></code></p></li>
+</ul>
+<p><strong>Note:</strong>
+you can only use the second method when there are no spaces in the name of the column.</p>
+<p><strong>DO THIS!:</strong> Run <code class="docutils literal notranslate"><span class="pre">value_counts()</span></code> on all of the columns.</p>
+<p>In order that you can see all of the many <code class="docutils literal notranslate"><span class="pre">firstnames</span></code> used, run the next cell first.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="via-pivot-table">
+<h3>3.2.2 …via <code class="docutils literal notranslate"><span class="pre">pivot_table()</span></code><a class="headerlink" href="#via-pivot-table" title="Permalink to this heading">#</a></h3>
+<p>Let’s try the <code class="docutils literal notranslate"><span class="pre">pivot_table()</span></code> method.  This is slightly different information than that produced by <code class="docutils literal notranslate"><span class="pre">value_counts()</span></code> run on individual columns.</p>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>there is also a Pandas <code class="docutils literal notranslate"><span class="pre">pivot_table()</span></code> command (eg  <code class="docutils literal notranslate"><span class="pre">pd.pivot_table(df,...)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">dataframe.pivot_table()</span></code>)</p></li>
+<li><p>you can write the <code class="docutils literal notranslate"><span class="pre">pivot_table()</span></code> method on one line or you can split it up on separate lines to make it more readable. Below, the trailing commas indicate that the command continues on to the next line. For the first parameter, there is no trailing comma, so we used <code class="docutils literal notranslate"><span class="pre">\</span></code>, the line continuation symbol. This approach also lets you comment (via #) mid-command.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resumes</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span> \
+              <span class="n">index</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span>      <span class="c1"># the variable for the rows in your pivot table</span>
+              <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;race&#39;</span><span class="p">,</span>   <span class="c1"># the variable for the columns of your pivot table</span>
+              <span class="n">values</span><span class="o">=</span><span class="s1">&#39;call&#39;</span><span class="p">,</span>    <span class="c1"># the values you will be using...since we are just counting the choice doesn&#39;t matter much</span>
+              <span class="n">aggfunc</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>      <span class="c1"># len is the function to use for counting</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="n">f68cc4768b0e</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">resumes</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span> \
+<span class="g g-Whitespace">      </span><span class="mi">2</span>               <span class="n">index</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span>      <span class="c1"># the variable for the rows in your pivot table</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>               <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;race&#39;</span><span class="p">,</span>   <span class="c1"># the variable for the columns of your pivot table</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>               <span class="n">values</span><span class="o">=</span><span class="s1">&#39;call&#39;</span><span class="p">,</span>    <span class="c1"># the values you will be using...since we are just counting the choice doesn&#39;t matter much</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>               <span class="n">aggfunc</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>      <span class="c1"># len is the function to use for counting</span>
+
+<span class="ne">NameError</span>: name &#39;resumes&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<p>To calculate totals and subtotals, just add the parameter <code class="docutils literal notranslate"><span class="pre">margins=True</span></code> as below.  Here’s what it looks like written on one line.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resumes</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;race&#39;</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="s1">&#39;call&#39;</span><span class="p">,</span><span class="n">aggfunc</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span><span class="n">margins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Not only do you get the <code class="docutils literal notranslate"><span class="pre">value_counts()</span></code> for <code class="docutils literal notranslate"><span class="pre">race</span></code> and <code class="docutils literal notranslate"><span class="pre">sex</span></code>, but you also get the total number of resumes, as well as the counts for <code class="docutils literal notranslate"><span class="pre">black</span></code>-<code class="docutils literal notranslate"><span class="pre">female</span></code>, <code class="docutils literal notranslate"><span class="pre">black</span></code>-<code class="docutils literal notranslate"><span class="pre">male</span></code>, <code class="docutils literal notranslate"><span class="pre">white</span></code>-<code class="docutils literal notranslate"><span class="pre">female</span></code>, and <code class="docutils literal notranslate"><span class="pre">white</span></code>-<code class="docutils literal notranslate"><span class="pre">male</span></code>.  Useful!</p>
+<p>You can read more about <code class="docutils literal notranslate"><span class="pre">pivot_table()</span></code> <a class="reference external" href="https://jakevdp.github.io/PythonDataScienceHandbook/03.09-pivot-tables.html">here</a>.  There is also a <code class="docutils literal notranslate"><span class="pre">crosstab()</span></code> command which is similar, but has some slightly different features.</p>
+</section>
+</section>
+<section id="analyzing-the-overall-results">
+<h2>3.3 Analyzing the overall results<a class="headerlink" href="#analyzing-the-overall-results" title="Permalink to this heading">#</a></h2>
+<p>Now let’s <em>finally</em> get to the IMPORTANT question:  did <code class="docutils literal notranslate"><span class="pre">black</span></code> resumes receive callbacks at a lower rate than <code class="docutils literal notranslate"><span class="pre">white</span></code> ones?</p>
+<p>You could easily use <code class="docutils literal notranslate"><span class="pre">.groupby()</span></code> to calculate these rates.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resumes</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;race&#39;</span><span class="p">)[</span><span class="s1">&#39;call&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>So on average, the 6.4% of the <code class="docutils literal notranslate"><span class="pre">black</span></code> resumes received call backs whereas 9.7% of the <code class="docutils literal notranslate"><span class="pre">white</span></code> resumes did. That seems like a pretty big deal, both numerically and in what it says about the world.  You can see why there has been such interest in this study.</p>
+<p>You could also break down this data using gender in addition to race using a pivot table. We’re going to assign the resulting pivot table to the variable <code class="docutils literal notranslate"><span class="pre">resumes_pt</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resumes_pt</span> <span class="o">=</span> <span class="n">resumes</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span> \
+                                 <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span>
+                                 <span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span>
+                                 <span class="n">values</span> <span class="o">=</span> <span class="s1">&#39;call&#39;</span><span class="p">,</span>
+                                 <span class="n">aggfunc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="c1">#this applies the numpy mean function to the data</span>
+                                 <span class="n">margins</span> <span class="o">=</span> <span class="kc">True</span> \
+                                <span class="p">)</span>
+<span class="n">resumes_pt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Again, you can see  that ‘white’ resumes receive a call roughly 9.65% of the time, whereas ‘black’ resumes receive a call roughly 6.45% of the time.  You can also see the breakdown by gender.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">resumes_pt</span></code> is itself a dataframe, we can easily create a new column that is calculated from other columns.  As we have done in earlier notebooks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resumes_pt</span><span class="p">[</span><span class="s1">&#39;w2b&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">resumes_pt</span><span class="p">[</span><span class="s1">&#39;white&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">resumes_pt</span><span class="p">[</span><span class="s1">&#39;black&#39;</span><span class="p">]</span>
+<span class="n">resumes_pt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>With this new column, you can see that the 50% increase in call rate for white resumes over black resumes was pretty consistent (and discouraging) across <code class="docutils literal notranslate"><span class="pre">male</span></code> and <code class="docutils literal notranslate"><span class="pre">female</span></code> groups.</p>
+</section>
+<section id="the-results-by-name">
+<h2>3.4 The results by name<a class="headerlink" href="#the-results-by-name" title="Permalink to this heading">#</a></h2>
+<p>Now rank the names by <code class="docutils literal notranslate"><span class="pre">call</span></code> rate by using</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">groupby()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[]</span></code> column selection</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sort_values()</span></code></p></li>
+</ul>
+<p>And then answer the following questions on <em>QUIZ 05: Resumes B</em> on Canvas.</p>
+<ul class="simple">
+<li><p>What name had the highest rate for <code class="docutils literal notranslate"><span class="pre">call</span></code> ?</p></li>
+<li><p>What name had the lowest rate?</p></li>
+<li><p>How many names were above the average for all resumes you found in the pivot table?</p></li>
+<li><p>How many black names were above this average?</p></li>
+</ul>
+</section>
+<section id="something-to-ponder">
+<h2>3.5 Something to ponder<a class="headerlink" href="#something-to-ponder" title="Permalink to this heading">#</a></h2>
+<p>Although the fact that white resumes receive approximately 50% more calls than black resumes seems evidence of racial bias, doesn’t the fact that several black names received calls at an above average rate undermine that claim of racial bias?</p>
+<p>In the following lessons, we’ll develop a theory that will help us resolve this tension.</p>
+<p>But first…</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="you-try-it">
+<h1>4 You try it!<a class="headerlink" href="#you-try-it" title="Permalink to this heading">#</a></h1>
+<p>Here is an excerpt from the end of the abstract of the Bertrand and Mullainathan article:</p>
+<blockquote>
+<div><p>…The amount of discrimination is uniform across occupations and industries. Federal contractors and
+employers who list “Equal Opportunity Employer” in their ad discriminate as much as other
+employers. We find little evidence that our results are driven by employers inferring something
+other than race, such as social class, from the names. These results suggest that racial discrimination
+is still a prominent feature of the labor market.</p>
+</div></blockquote>
+<p>I created a very abridged version of the data (acquired from <a class="reference external" href="https://dev.openicpsr.org/openicpsr/project/108486/version/V1/view">here</a>) and put it on the repo for this course.  It has only four columns.</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>variable</strong></p></th>
+<th class="head"><p><strong>description</strong></p></th>
+<th class="head"><p><strong>values</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>race</p></td>
+<td><p>race of applicant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b</span></code>=black; <code class="docutils literal notranslate"><span class="pre">w</span></code>=white</p></td>
+</tr>
+<tr class="row-odd"><td><p>city</p></td>
+<td><p>city of employer and applicant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b</span></code>=Boston; <code class="docutils literal notranslate"><span class="pre">c</span></code>=Chicago</p></td>
+</tr>
+<tr class="row-even"><td><p>eoe</p></td>
+<td><p>does employer declare to be an ‘equal opportunity employer’</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code>=yes; <code class="docutils literal notranslate"><span class="pre">0</span></code>=no</p></td>
+</tr>
+<tr class="row-odd"><td><p>call</p></td>
+<td><p>whether a callback was made</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code>=yes; <code class="docutils literal notranslate"><span class="pre">0</span></code>=no</p></td>
+</tr>
+</tbody>
+</table>
+<p>The following line will load this data into a dataframe named <code class="docutils literal notranslate"><span class="pre">resumes_city_eoe</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resumes_city_eoe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://raw.githubusercontent.com/sawula/Survey-of-Python-data-science-stack/gh-pages/resumes_city_eoe.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Answer these two questions using two different pivot tables.</p>
+<ul class="simple">
+<li><p>Is the racial bias different in the different cities?</p></li>
+<li><p>Is the racial bias different with the group of equal opportunity employers (this abstract says no!)</p></li>
+</ul>
+<p>To answer these questions, calculate the white / black call rates for these groups.  Once you’ve answered these, take <em>QUIZ 05: Resumes C</em>.</p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="L%2004b%20FIFA%2022.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">FIFA22 players exploration</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Mark Sawula<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
