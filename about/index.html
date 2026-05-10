@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — poolish.org</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F7F3EC;
+    --warm-dark: #2A2118;
+    --warm-mid: #6B5744;
+    --warm-accent: #C4703A;
+    --warm-light: #E8DDD0;
+    --warm-border: #D4C4B0;
+  }
+  body { background: var(--cream); color: var(--warm-dark); font-family: 'Source Serif 4', Georgia, serif; font-weight: 300; min-height: 100vh; }
+  nav { border-bottom: 1px solid var(--warm-border); padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; background: var(--cream); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; color: var(--warm-dark); text-decoration: none; }
+  .nav-logo span { color: var(--warm-accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warm-mid); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--warm-accent); }
+  .page-header { padding: 4rem 2.5rem 3rem; max-width: 860px; margin: 0 auto; border-bottom: 1px solid var(--warm-border); display: grid; grid-template-columns: auto 1fr; gap: 2.5rem; align-items: center; }
+  .bio-initial { width: 80px; height: 80px; border-radius: 50%; background: var(--warm-mid); color: var(--cream); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; flex-shrink: 0; }
+  .page-kicker { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-accent); margin-bottom: 0.75rem; }
+  .page-header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .page-header .subtitle { font-size: 0.95rem; color: var(--warm-mid); }
+  .hero-rule { width: 48px; height: 2px; background: var(--warm-accent); margin: 1.5rem 0; }
+  .content { max-width: 860px; margin: 0 auto; padding: 3rem 2.5rem; display: grid; grid-template-columns: 2fr 1fr; gap: 4rem; align-items: start; }
+  .bio-prose p { font-size: 1rem; line-height: 1.85; color: var(--warm-mid); margin-bottom: 1.25rem; }
+  .bio-prose p:last-child { margin-bottom: 0; }
+  .bio-sidebar { }
+  .sidebar-section { margin-bottom: 2rem; }
+  .sidebar-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warm-accent); margin-bottom: 0.75rem; }
+  .sidebar-item { font-size: 0.88rem; line-height: 1.6; color: var(--warm-mid); margin-bottom: 0.4rem; }
+  .sidebar-link { font-size: 0.88rem; color: var(--warm-accent); text-decoration: none; border-bottom: 1px solid var(--warm-border); padding-bottom: 1px; display: inline-block; margin-bottom: 0.5rem; }
+  .sidebar-link:hover { border-color: var(--warm-accent); }
+  footer { max-width: 860px; margin: 3rem auto 0; padding: 2rem 2.5rem; border-top: 1px solid var(--warm-border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--warm-mid); }
+  .footer-note { font-size: 0.8rem; color: var(--warm-border); font-style: italic; }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="../index.html">pool<span>ish</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../recipes/index.html">Recipes</a></li>
+    <li><a href="../notebooks/index.html">Notebooks</a></li>
+    <li><a href="../speccards/index.html">Spec Cards</a></li>
+    <li><a href="../about/index.html" class="active">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="bio-initial">MS</div>
+  <div>
+    <p class="page-kicker">04 — About</p>
+    <h1>Mark Sawula</h1>
+    <p class="subtitle">Teacher · Peddie School · Hightstown, NJ</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="bio-prose">
+    <div class="hero-rule"></div>
+    <p>This is a placeholder bio — replace this with whatever you'd like people to know about you. What you teach, what you're interested in, how long you've been baking bread.</p>
+    <p>Poolish.org is a personal site for sharing the things I'm working on: recipes from the kitchen, notebooks from a data science course I've been building, and a framework for designing learning experiences called spec cards.</p>
+    <p>The name comes from the bread starter — a poolish is a simple mixture of flour, water, and a little yeast that ferments overnight and gives the final loaf its depth and flavor. It takes patience. Most good things do.</p>
+  </div>
+
+  <div class="bio-sidebar">
+    <div class="sidebar-section">
+      <p class="sidebar-label">Where to find me</p>
+      <a class="sidebar-link" href="https://github.com/sawula">GitHub</a><br>
+      <a class="sidebar-link" href="mailto:">Email</a>
+    </div>
+    <div class="sidebar-section">
+      <p class="sidebar-label">Currently working on</p>
+      <p class="sidebar-item">Spec card framework</p>
+      <p class="sidebar-item">Data science curriculum</p>
+      <p class="sidebar-item">This website</p>
+    </div>
+    <div class="sidebar-section">
+      <p class="sidebar-label">Also</p>
+      <p class="sidebar-item">Baking bread</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">poolish.org</span>
+  <span class="footer-note">a slow work in progress</span>
+</footer>
+</body>
+</html>

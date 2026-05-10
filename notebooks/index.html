@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notebooks — poolish.org</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F7F3EC;
+    --warm-dark: #2A2118;
+    --warm-mid: #6B5744;
+    --warm-accent: #C4703A;
+    --warm-light: #E8DDD0;
+    --warm-border: #D4C4B0;
+  }
+  body { background: var(--cream); color: var(--warm-dark); font-family: 'Source Serif 4', Georgia, serif; font-weight: 300; min-height: 100vh; }
+  nav { border-bottom: 1px solid var(--warm-border); padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; background: var(--cream); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; color: var(--warm-dark); text-decoration: none; }
+  .nav-logo span { color: var(--warm-accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warm-mid); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--warm-accent); }
+  .page-header { padding: 4rem 2.5rem 3rem; max-width: 860px; margin: 0 auto; border-bottom: 1px solid var(--warm-border); }
+  .page-kicker { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-accent); margin-bottom: 1rem; }
+  .page-header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem; }
+  .page-header p { font-size: 1.05rem; line-height: 1.75; color: var(--warm-mid); max-width: 540px; }
+  .hero-rule { width: 48px; height: 2px; background: var(--warm-accent); margin: 1.5rem 0; }
+  .content { max-width: 860px; margin: 0 auto; padding: 3rem 2.5rem; }
+  .intro { font-size: 0.95rem; line-height: 1.8; color: var(--warm-mid); max-width: 600px; margin-bottom: 2.5rem; }
+  .notebook-list { display: flex; flex-direction: column; gap: 0; }
+  .notebook-item { display: flex; align-items: baseline; justify-content: space-between; padding: 1.25rem 0; border-bottom: 0.5px solid var(--warm-border); gap: 2rem; text-decoration: none; color: inherit; transition: background 0.15s; }
+  .notebook-item:hover .notebook-title { color: var(--warm-accent); }
+  .notebook-meta { display: flex; align-items: baseline; gap: 1rem; flex: 1; }
+  .notebook-num { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-accent); min-width: 32px; }
+  .notebook-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; transition: color 0.2s; }
+  .notebook-desc { font-size: 0.85rem; color: var(--warm-mid); }
+  .notebook-tag { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; background: var(--warm-light); color: var(--warm-mid); padding: 3px 10px; border-radius: 2px; white-space: nowrap; }
+  .placeholder-note { margin-top: 2.5rem; padding: 1.5rem; border: 0.5px dashed var(--warm-border); border-radius: 4px; }
+  .placeholder-note p { font-size: 0.9rem; line-height: 1.7; color: var(--warm-mid); font-style: italic; }
+  footer { max-width: 860px; margin: 3rem auto 0; padding: 2rem 2.5rem; border-top: 1px solid var(--warm-border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--warm-mid); }
+  .footer-note { font-size: 0.8rem; color: var(--warm-border); font-style: italic; }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="../index.html">pool<span>ish</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../recipes/index.html">Recipes</a></li>
+    <li><a href="../notebooks/index.html" class="active">Notebooks</a></li>
+    <li><a href="../speccards/index.html">Spec Cards</a></li>
+    <li><a href="../about/index.html">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="page-kicker">02 — Notebooks</p>
+  <h1>Data science course</h1>
+  <div class="hero-rule"></div>
+  <p>Jupyter notebooks from an introductory data science course. Python, pandas, visualization, and experimental research methods.</p>
+</div>
+
+<div class="content">
+  <p class="intro">These notebooks were developed for a one-term experimental research course. They're meant to be approachable — you don't need to be a programmer to follow along.</p>
+
+  <div class="notebook-list">
+    <a class="notebook-item" href="#">
+      <div class="notebook-meta">
+        <span class="notebook-num">01</span>
+        <div>
+          <p class="notebook-title">Introduction to Python and Colab</p>
+          <p class="notebook-desc">Getting started — variables, cells, running code for the first time</p>
+        </div>
+      </div>
+      <span class="notebook-tag">Coming soon</span>
+    </a>
+    <a class="notebook-item" href="#">
+      <div class="notebook-meta">
+        <span class="notebook-num">02</span>
+        <div>
+          <p class="notebook-title">Working with data using pandas</p>
+          <p class="notebook-desc">Loading, exploring, and cleaning tabular data</p>
+        </div>
+      </div>
+      <span class="notebook-tag">Coming soon</span>
+    </a>
+    <a class="notebook-item" href="#">
+      <div class="notebook-meta">
+        <span class="notebook-num">03</span>
+        <div>
+          <p class="notebook-title">Visualization with matplotlib</p>
+          <p class="notebook-desc">Telling stories with charts — scatter plots, histograms, and more</p>
+        </div>
+      </div>
+      <span class="notebook-tag">Coming soon</span>
+    </a>
+    <a class="notebook-item" href="#">
+      <div class="notebook-meta">
+        <span class="notebook-num">04</span>
+        <div>
+          <p class="notebook-title">Experimental research methods</p>
+          <p class="notebook-desc">Designing studies, collecting data, drawing conclusions</p>
+        </div>
+      </div>
+      <span class="notebook-tag">Coming soon</span>
+    </a>
+  </div>
+
+  <div class="placeholder-note">
+    <p>Notebooks are being migrated from Google Colab. Links will appear here as they're added. In the meantime, the original course materials are available via the data science course Google Drive folder.</p>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">poolish.org</span>
+  <span class="footer-note">a slow work in progress</span>
+</footer>
+</body>
+</html>

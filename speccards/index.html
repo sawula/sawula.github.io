@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec Cards — poolish.org</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F7F3EC;
+    --warm-dark: #2A2118;
+    --warm-mid: #6B5744;
+    --warm-accent: #C4703A;
+    --warm-light: #E8DDD0;
+    --warm-border: #D4C4B0;
+  }
+  body { background: var(--cream); color: var(--warm-dark); font-family: 'Source Serif 4', Georgia, serif; font-weight: 300; min-height: 100vh; }
+  nav { border-bottom: 1px solid var(--warm-border); padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; background: var(--cream); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; color: var(--warm-dark); text-decoration: none; }
+  .nav-logo span { color: var(--warm-accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warm-mid); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--warm-accent); }
+  .page-header { padding: 4rem 2.5rem 3rem; max-width: 860px; margin: 0 auto; border-bottom: 1px solid var(--warm-border); }
+  .page-kicker { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-accent); margin-bottom: 1rem; }
+  .page-header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem; }
+  .page-header p { font-size: 1.05rem; line-height: 1.75; color: var(--warm-mid); max-width: 540px; }
+  .hero-rule { width: 48px; height: 2px; background: var(--warm-accent); margin: 1.5rem 0; }
+  .content { max-width: 860px; margin: 0 auto; padding: 3rem 2.5rem; }
+  .intro { font-size: 1rem; line-height: 1.85; color: var(--warm-mid); max-width: 620px; margin-bottom: 3rem; }
+  .chapters { display: flex; flex-direction: column; gap: 0; }
+  .chapter { padding: 1.5rem 0; border-bottom: 0.5px solid var(--warm-border); display: flex; gap: 2rem; align-items: baseline; }
+  .chapter-num { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warm-accent); min-width: 80px; }
+  .chapter-body h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .chapter-body p { font-size: 0.85rem; line-height: 1.65; color: var(--warm-mid); }
+  .chapter-tag { display: inline-block; margin-top: 0.5rem; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: var(--warm-light); color: var(--warm-mid); padding: 3px 10px; border-radius: 2px; }
+  footer { max-width: 860px; margin: 3rem auto 0; padding: 2rem 2.5rem; border-top: 1px solid var(--warm-border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--warm-mid); }
+  .footer-note { font-size: 0.8rem; color: var(--warm-border); font-style: italic; }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="../index.html">pool<span>ish</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../recipes/index.html">Recipes</a></li>
+    <li><a href="../notebooks/index.html">Notebooks</a></li>
+    <li><a href="../speccards/index.html" class="active">Spec Cards</a></li>
+    <li><a href="../about/index.html">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="page-kicker">03 — Spec Cards</p>
+  <h1>A design approach</h1>
+  <div class="hero-rule"></div>
+  <p>A framework for designing learning experiences through structured specification. What they are, how to make them, and why they help.</p>
+</div>
+
+<div class="content">
+  <p class="intro">Spec cards are a way of thinking carefully about what a learning experience is actually supposed to do — before you build it. This booklet walks through the approach, with examples and code.</p>
+
+  <div class="chapters">
+    <div class="chapter">
+      <span class="chapter-num">Chapter 1</span>
+      <div class="chapter-body">
+        <h3>What is a spec card?</h3>
+        <p>The basic idea — what problem spec cards solve and where the approach came from.</p>
+        <span class="chapter-tag">Coming soon</span>
+      </div>
+    </div>
+    <div class="chapter">
+      <span class="chapter-num">Chapter 2</span>
+      <div class="chapter-body">
+        <h3>Anatomy of a spec card</h3>
+        <p>The fields, what goes in them, and why each one matters.</p>
+        <span class="chapter-tag">Coming soon</span>
+      </div>
+    </div>
+    <div class="chapter">
+      <span class="chapter-num">Chapter 3</span>
+      <div class="chapter-body">
+        <h3>Writing your first spec card</h3>
+        <p>A worked example from scratch, with commentary.</p>
+        <span class="chapter-tag">Coming soon</span>
+      </div>
+    </div>
+    <div class="chapter">
+      <span class="chapter-num">Chapter 4</span>
+      <div class="chapter-body">
+        <h3>Spec cards in practice</h3>
+        <p>How they fit into a real design process — with code examples.</p>
+        <span class="chapter-tag">Coming soon</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">poolish.org</span>
+  <span class="footer-note">a slow work in progress</span>
+</footer>
+</body>
+</html>
