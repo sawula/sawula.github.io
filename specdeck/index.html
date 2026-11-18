@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish">
-<meta name="build" content="2h-web-1118">
+<meta name="build" content="2i-web-1118">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -36,8 +36,8 @@
   #homeView p { color:var(--muted); margin:2px 0 6px; }
   #homeSvg { display:block; margin:0 auto; }
   #homeSvg g.deck:hover circle.main { stroke:var(--accent); stroke-width:3; }
-  #homeSvg .del { opacity:.45; cursor:pointer; }
-  #homeSvg g.deck:hover .del, #homeSvg .del.armed { opacity:1; }
+  #homeSvg .del, #homeSvg .cp { opacity:.45; cursor:pointer; }
+  #homeSvg g.deck:hover .del, #homeSvg g.deck:hover .cp, #homeSvg .del.armed { opacity:1; }
   #work { flex:1; display:flex; min-height:0; }
   #addbar { position:absolute; left:10px; top:10px; display:flex; gap:6px; z-index:20; }
   #cv { position:relative; flex:1; overflow:hidden; background:#efede4; background-image:radial-gradient(#cfcbbb 1px, transparent 1px); background-size:24px 24px; touch-action:none; cursor:default; }
@@ -1389,9 +1389,19 @@
       const armed = armDel === it.i, x = mk(g, 'g', { 'class':'del' + (armed ? ' armed' : ''), transform:'translate(' + r * 0.7 + ',' + -r * 0.7 + ')', role:'button', 'aria-label':'Delete deck ' + it.d.name });
       x.addEventListener('click', ev => { ev.stopPropagation(); if (!armed){ armDel = it.i; clearTimeout(armT); armT = setTimeout(() => { armDel = -1; renderHome(); }, 3000); renderHome(); } else { clearTimeout(armT); armDel = -1; state.lib.splice(it.i, 1); save(); renderHome(); } });
       x.addEventListener('keydown', ev => ev.stopPropagation());
+      const cp = mk(g, 'g', { 'class':'cp', transform:'translate(' + -r * 0.7 + ',' + -r * 0.7 + ')', role:'button', 'aria-label':'Duplicate deck ' + it.d.name });
+      cp.addEventListener('click', ev => { ev.stopPropagation(); dupDeck(it.i); });
+      cp.addEventListener('keydown', ev => ev.stopPropagation());
+      mk(cp, 'circle', { r:11, fill:'#fff', stroke:'#b9b5a2' }); mk(cp, 'rect', { x:-6, y:-4, width:8, height:9, rx:1.5, fill:'none', stroke:'#5b636b', 'stroke-width':1.4 }); mk(cp, 'rect', { x:-2, y:-7, width:8, height:9, rx:1.5, fill:'#fff', stroke:'#5b636b', 'stroke-width':1.4 }); mk(cp, 'title', {}, 'Duplicate this deck');
       if (armed){ mk(x, 'rect', { x:-56, y:-12, width:112, height:24, rx:12, fill:'#fff', stroke:'#a12626' }); mk(x, 'text', { 'text-anchor':'middle', dy:'0.35em', 'font-size':12.5, fill:'#a12626' }, 'Click to delete'); }
       else { mk(x, 'circle', { r:11, fill:'#fff', stroke:'#b9b5a2' }); mk(x, 'text', { 'text-anchor':'middle', dy:'0.36em', 'font-size':16, fill:'#5b636b' }, '×'); mk(x, 'title', {}, 'Delete this deck'); }
     });
+  }
+  function dupDeck(i){
+    const o = state.lib[i], c = JSON.parse(JSON.stringify(o)); let n = 1;
+    const nm = k => o.name + ' (copy' + (k > 1 ? ' ' + k : '') + ')';
+    while (state.lib.some(x => x.name === nm(n))) n++;
+    c.name = nm(n); state.lib.splice(i + 1, 0, c); save(); renderHome();
   }
   function newDeck(){
     let n = 1; while (state.lib.some(d => d.name === 'Untitled deck' + (n > 1 ? ' ' + n : ''))) n++;
