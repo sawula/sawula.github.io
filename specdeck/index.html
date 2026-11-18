@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish">
-<meta name="build" content="2j-web-1118">
+<meta name="build" content="2k-web-1118">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -15,7 +15,9 @@
   button { cursor:pointer; }
   #app { display:flex; flex-direction:column; height:100vh; min-height:560px; }
   #top { display:flex; align-items:center; gap:8px; padding:7px 12px; border-bottom:1px solid var(--line); background:#fff; flex-wrap:wrap; }
-  #top .sp { flex:1; }
+  #top .sp { flex:0 0 0; }
+  #savedNote { flex:1 1 0; min-width:40px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #top .menu { margin-left:auto; }
   #top h1 { font-size:16px; margin:0 6px 0 2px; white-space:nowrap; }
   .btn { background:#fff; border:1px solid var(--line); border-radius:8px; padding:5px 10px; }
   .btn:hover:not(:disabled) { border-color:var(--accent); background:#f3f7ff; }
@@ -23,9 +25,9 @@
   .btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
   .btn.primary:hover { background:#244c93; }
   .btn.danger { color:#a12626; border-color:#e3b5b5; }
-  #deckName { font-weight:600; font-size:15px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; min-width:140px; max-width:300px; background:#fff; }
+  #deckName { font-weight:600; font-size:15px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; min-width:140px; width:190px; max-width:300px; background:#fff; }
   #deckName:hover, #deckName:focus { border-color:var(--accent); }
-  #deckFolder { font-size:13.5px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; width:130px; background:#fff; }
+  #deckFolder { font-size:13.5px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; width:104px; background:#fff; }
   #deckFolder:hover, #deckFolder:focus { border-color:var(--accent); }
   .menu { position:relative; }
   .menu > summary { list-style:none; cursor:pointer; padding:5px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; }
@@ -168,6 +170,7 @@
       <button class="btn" id="undo" title="Undo (Ctrl/Cmd+Z)">↶</button>
       <button class="btn" id="redo" title="Redo (Ctrl/Cmd+Shift+Z)">↷</button>
       <button class="btn" id="tidy" title="Rearrange everything into neat columns">Tidy up</button>
+      <button class="btn" id="dlDeck2" title="Download this deck as a text file, to keep it or hand it in">Download deck</button>
       <button class="btn" id="saveBtn" title="Download a copy of this page with all your decks inside it">Save a copy…</button>
       <button class="btn primary" id="toAI">Copy for AI</button>
     </span>
@@ -562,7 +565,7 @@
 
   // ================= persistence + history =================
   function save(){
-    try { localStorage.setItem(KEY, JSON.stringify(state.lib)); const n = $('savedNote'); if (n) n.textContent = 'Autosaved in this browser · ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){}
+    try { localStorage.setItem(KEY, JSON.stringify(state.lib)); const n = $('savedNote'); if (n) n.textContent = 'Saved in this browser only · ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){}
   }
   function loadLib(){
     try { const s = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(s) && s.length && s.every(d => Array.isArray(d.items))){ s.forEach(d => { migrateDeck(d); settle(d); }); return s; } } catch(e){}
@@ -1475,7 +1478,12 @@
     return '<!DOCTYPE html>\n' + c.outerHTML;
   }
   function menuMsg(ok){ $('menuMsg').textContent = ok ? 'Saved to your downloads.' : 'The browser blocked the download here. Use Copy all decks in the Text tab instead.'; }
-  $('dlDeck').onclick = () => { if (state.ix < 0) return; menuMsg(download(slug(deck().name) + '.txt', toText(deck(), { layout:true }) + '\n', 'text/plain')); };
+  function dlDeckNow(){
+    if (state.ix < 0) return;
+    const ok = download(slug(deck().name) + '.txt', toText(deck(), { layout:true }) + '\n', 'text/plain'); menuMsg(ok);
+    const n = $('savedNote'); if (n) n.textContent = ok ? 'Deck downloaded to your Downloads folder.' : 'This page cannot download files. Use the Text tab to copy your deck instead.';
+  }
+  $('dlDeck').onclick = dlDeckNow; $('dlDeck2').onclick = dlDeckNow;
   function savePage(){
     const ok = download('spec-deck.html', pageCopy(), 'text/html');
     menuMsg(ok); const n = $('savedNote'); if (n) n.textContent = ok ? 'Copy downloaded — look in your Downloads folder.' : 'This page cannot download files. Use the Text tab to copy your decks instead.';
