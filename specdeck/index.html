@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish">
-<meta name="build" content="2i-web-1118">
+<meta name="build" content="2j-web-1118">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -25,6 +25,8 @@
   .btn.danger { color:#a12626; border-color:#e3b5b5; }
   #deckName { font-weight:600; font-size:15px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; min-width:140px; max-width:300px; background:#fff; }
   #deckName:hover, #deckName:focus { border-color:var(--accent); }
+  #deckFolder { font-size:13.5px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; width:130px; background:#fff; }
+  #deckFolder:hover, #deckFolder:focus { border-color:var(--accent); }
   .menu { position:relative; }
   .menu > summary { list-style:none; cursor:pointer; padding:5px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; }
   .menu > summary::-webkit-details-marker { display:none; }
@@ -158,6 +160,8 @@
     <h1>Spec Deck</h1>
     <button class="btn" id="homeBtn">⌂ Decks</button>
     <input id="deckName" type="text" aria-label="Deck name" placeholder="Deck name">
+    <input id="deckFolder" type="text" list="folderList" aria-label="Folder" placeholder="Folder" title="Decks with the same folder name are grouped on the Decks screen">
+    <datalist id="folderList"></datalist>
     <span class="muted" id="savedNote" aria-live="polite"></span>
     <span class="sp"></span>
     <span id="deckTools" style="display:flex;gap:8px;align-items:center">
@@ -447,6 +451,7 @@
   // ----- parsed deck -> canvas deck -----
   function deckFromParsed(p){
     const d = { name:p.name, desc:p.text || '', items:[], links:[] }, meta = [];
+    { const fm = d.desc.match(/^Folder:[ \t]*(.*?)[ \t]*(?:\n|$)/i); if (fm){ if (fm[1]) d.folder = fm[1]; d.desc = d.desc.slice(fm[0].length); } }
     const walk = (node, parent, pname) => {
       (node.children || []).forEach(ch => {
         const kids = (ch.children || []).length;
@@ -517,7 +522,7 @@
   function toText(d, o){
     o = Object.assign({ layout:false, state:() => 'full' }, o || {});
     const T = treeOf(d);
-    let s = '# ' + d.name; if (d.desc) s += '\n' + d.desc;
+    let s = '# ' + d.name; if (d.folder && !o.noFolder) s += '\nFolder: ' + d.folder; if (d.desc) s += '\n' + d.desc;
     T.children.forEach(c => { s += (c.children.length ? '\n\n' : '\n') + nodeText(c, 0, o); });
     const order = [], pname = new Map();
     (function walk(n, pn){ n.children.forEach(c => { order.push(c.it); pname.set(c.it, pn); walk(c, c.it.name); }); })(T, '');
@@ -1212,7 +1217,7 @@
     const d = deck(), mode = $('mode').value;
     if (mode === 'json') return JSON.stringify(d, null, 2);
     const lay = $('lay').checked;
-    let o = { layout:lay, dropEmpty:$('hdr').checked };
+    let o = { layout:lay, dropEmpty:$('hdr').checked, noFolder:true };
     if (mode === 'titles') o.state = n => n.children.length ? 'expand' : 'title';
     if (mode === 'selection'){
       const sid = state.sel && state.sel.kind !== 'link' ? state.sel.id : null, sit = sid && byId(sid);
@@ -1322,6 +1327,9 @@
   $('homeBtn').onclick = () => { state.ix = -1; state.sel = null; showView(); };
   $('deckName').addEventListener('input', e => { if (state.ix >= 0){ deck().name = e.target.value; } });
   $('deckName').addEventListener('focus', () => { $('deckName')._b = snap(); });
+  $('deckFolder').addEventListener('focus', () => { $('deckFolder')._b = snap(); $('folderList').innerHTML = [...new Set(state.lib.map(d => (d.folder || '').trim()).filter(Boolean))].map(f => '<option value="' + esc(f) + '">').join(''); });
+  $('deckFolder').addEventListener('input', e => { if (state.ix < 0) return; const v = e.target.value.trim(); if (v) deck().folder = v; else delete deck().folder; });
+  $('deckFolder').addEventListener('change', () => { const b = $('deckFolder')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
   $('deckName').addEventListener('change', e => { const b = $('deckName')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
   $('reset').onclick = () => { try { localStorage.removeItem(KEY); } catch(e){} state.lib = seedDecks(); state.ix = -1; state.sel = null; $('menu').open = false; boot(); };
   armDelete($('delDeck'), () => {
@@ -1339,6 +1347,7 @@
     $('work').style.display = home ? 'none' : 'flex';
     $('deckTools').style.display = home ? 'none' : 'flex';
     $('deckName').style.display = home ? 'none' : '';
+    $('deckFolder').style.display = home ? 'none' : '';
     $('homeBtn').style.display = home ? 'none' : '';
     $('delDeck').style.display = home ? 'none' : '';
     $('dlDeck').style.display = home ? 'none' : '';
@@ -1350,6 +1359,7 @@
   function renderAll(skipInspector){
     renderCanvas(); if (!skipInspector) inspector(); refreshText(); syncUndo(); applyView();
     if (document.activeElement !== $('deckName')) $('deckName').value = deck().name;
+    if (document.activeElement !== $('deckFolder')) $('deckFolder').value = deck().folder || '';
   }
   let armDel = -1, armT = null;
   function renderHome(){
@@ -1360,7 +1370,23 @@
     const p = document.querySelector('#homeView p');
     p.textContent = state.lib.length ? 'Each circle is a deck. Click one to open its canvas, or start a new deck with the dashed circle.' : 'No decks yet. Click “+ New deck” to start, or drop a deck text file or notebook anywhere on the page.';
     p.style.color = '';
-    const items = [...state.lib.map((d, i) => ({ i, d, r:Math.min(112, 66 + 2.5 * d.items.length) })), { add:true, r:62 }], gap = 22;
+    const rOf = d => Math.min(112, 66 + 2.5 * d.items.length), gap = 22, groups = new Map(), units = [];
+    state.lib.forEach((d, i) => {
+      const f = (d.folder || '').trim();
+      if (!f) units.push({ i, d, r:rOf(d) });
+      else { let u = groups.get(f); if (!u){ u = { folder:f, kids:[] }; groups.set(f, u); units.push(u); } u.kids.push({ i, d, r:rOf(d) * 0.85 }); }
+    });
+    units.forEach(u => {   // a folder is a circle that holds its deck circles, or a single closed circle
+      if (!u.folder) return;
+      u.closed = u.kids.every(k => k.d.fold);
+      if (u.closed){ u.r = 84; return; }
+      const n = u.kids.length, cols = n <= 2 ? n : Math.ceil(Math.sqrt(n)), rws = []; for (let k = 0; k < n; k += cols) rws.push(u.kids.slice(k, k + cols));
+      const rh = rws.map(r => Math.max(...r.map(k => k.r)) * 2), rw = rws.map(r => r.reduce((s, k) => s + k.r * 2, 0) + 14 * (r.length - 1)), th = rh.reduce((s, h) => s + h, 0) + 14 * (rws.length - 1);
+      let yy = -th / 2 + 14;
+      rws.forEach((r, a) => { let xx = -rw[a] / 2; r.forEach(k => { k.ox = xx + k.r; k.oy = yy + rh[a] / 2; xx += k.r * 2 + 14; }); yy += rh[a] + 14; });
+      u.r = Math.max(70, Math.max(...u.kids.map(k => Math.hypot(k.ox, k.oy) + k.r)) + 30);
+    });
+    const items = [...units, { add:true, r:62 }];
     const rows = []; let row = [], used = 0;
     items.forEach(it => { const w = it.r * 2; if (row.length && used + gap + w > W){ rows.push(row); row = []; used = 0; } used += (row.length ? gap : 0) + w; row.push(it); });
     rows.push(row);
@@ -1368,11 +1394,30 @@
     rows.forEach(r => {
       const rh = Math.max(...r.map(it => it.r)) * 2, tw = r.reduce((s, it) => s + it.r * 2, 0) + gap * (r.length - 1);
       let x = (W - tw) / 2;
-      r.forEach(it => { it.x = x + it.r; it.y = y + rh / 2; x += it.r * 2 + gap; });
+      r.forEach(it => { it.x = x + it.r; it.y = y + rh / 2; x += it.r * 2 + gap; if (it.folder && !it.closed) it.kids.forEach(k => { k.x = it.x + k.ox; k.y = it.y + k.oy; }); });
       y += rh + gap;
     });
     svg.setAttribute('width', W); svg.setAttribute('height', Math.max(380, y));
-    items.forEach(it => {
+    const draw = []; items.forEach(it => { draw.push(it); if (it.folder && !it.closed) it.kids.forEach(k => draw.push(k)); });
+    draw.forEach(it => {
+      if (it.folder){
+        const r = it.r, g = mk(svg, 'g', { 'class':'fold', transform:'translate(' + it.x + ',' + it.y + ')' });
+        mk(g, 'circle', { 'class':'fmain', r, fill:'#f1efe6', stroke:'#8a8878', 'stroke-width':2.5 });
+        const nm = it.folder.length > 22 ? it.folder.slice(0, 21) + '…' : it.folder;
+        const hit = mk(g, 'g', { role:'button', tabindex:0, style:'cursor:pointer', 'aria-label':(it.closed ? 'Open folder ' : 'Close folder ') + it.folder });
+        const flip = () => { it.kids.forEach(k => { if (it.closed) delete k.d.fold; else k.d.fold = true; }); save(); renderHome(); };
+        hit.addEventListener('click', flip); hit.addEventListener('keydown', ev => { if (ev.key === 'Enter') flip(); });
+        if (it.closed){
+          mk(hit, 'circle', { r, fill:'transparent' });
+          mk(hit, 'text', { 'text-anchor':'middle', y:-6, 'font-size':16, 'font-weight':700, fill:'#1f2328' }, '▸ ' + nm);
+          mk(hit, 'text', { 'text-anchor':'middle', y:16, 'font-size':12.5, fill:'#5b636b' }, plural(it.kids.length, 'deck'));
+        } else {
+          mk(hit, 'rect', { x:-90, y:-r + 8, width:180, height:28, fill:'transparent' });
+          mk(hit, 'text', { 'text-anchor':'middle', y:-r + 28, 'font-size':15, 'font-weight':700, fill:'#1f2328' }, '▾ ' + nm);
+        }
+        mk(g, 'title', {}, it.folder + ' (folder)');
+        return;
+      }
       const r = it.r, g = mk(svg, 'g', { 'class':'deck', transform:'translate(' + it.x + ',' + it.y + ')', role:'button', tabindex:0, style:'cursor:pointer' });
       const go = () => it.add ? newDeck() : openDeck(it.i);
       g.addEventListener('click', go); g.addEventListener('keydown', ev => { if (ev.key === 'Enter') go(); });
