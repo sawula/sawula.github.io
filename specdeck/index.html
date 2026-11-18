@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish">
-<meta name="build" content="2k-web-1118">
+<meta name="build" content="2l-web-1118">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -1478,12 +1478,13 @@
     return '<!DOCTYPE html>\n' + c.outerHTML;
   }
   function menuMsg(ok){ $('menuMsg').textContent = ok ? 'Saved to your downloads.' : 'The browser blocked the download here. Use Copy all decks in the Text tab instead.'; }
-  function dlDeckNow(){
+  function dlDeckNow(fromMenu){
     if (state.ix < 0) return;
-    const ok = download(slug(deck().name) + '.txt', toText(deck(), { layout:true }) + '\n', 'text/plain'); menuMsg(ok);
+    const ok = download(slug(deck().name) + '.txt', toText(deck(), { layout:true }) + '\n', 'text/plain'); if (fromMenu) menuMsg(ok);
     const n = $('savedNote'); if (n) n.textContent = ok ? 'Deck downloaded to your Downloads folder.' : 'This page cannot download files. Use the Text tab to copy your deck instead.';
   }
-  $('dlDeck').onclick = dlDeckNow; $('dlDeck2').onclick = dlDeckNow;
+  $('dlDeck').onclick = () => dlDeckNow(true); $('dlDeck2').onclick = () => dlDeckNow(false);
+  $('menu').addEventListener('toggle', () => { if (!$('menu').open) $('menuMsg').textContent = ''; });
   function savePage(){
     const ok = download('spec-deck.html', pageCopy(), 'text/html');
     menuMsg(ok); const n = $('savedNote'); if (n) n.textContent = ok ? 'Copy downloaded — look in your Downloads folder.' : 'This page cannot download files. Use the Text tab to copy your decks instead.';
