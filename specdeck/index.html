@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish">
-<meta name="build" content="2e-web-1117">
+<meta name="build" content="2h-web-1118">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -235,49 +235,23 @@
   const FILE_ID = (document.querySelector('meta[name=file-id]') || {}).content || 'web';
   const KEY = FILE_ID === 'web' ? 'specdeck-v3' : 'specdeck-v4-' + FILE_ID;
   { const bi = document.getElementById('buildInfo'); if (bi) bi.textContent = 'This file: build ' + ((document.querySelector('meta[name=build]') || {}).content || 'dev') + ' · save slot ' + FILE_ID; }
-  const REQUEST = [
-    'This is a spec deck: a plain-text outline of a data-science program that I drew as boxes on a canvas. Please turn it into a Google Colab notebook in Python.',
-    '',
-    'HOW TO READ IT',
-    '- "# Name" is the deck. Each "- Label: Title" line is a box ("- Title" if it has no label). The indented lines under a box are its instructions. Labels are words I chose, such as Goal, Data, Process, File, Data viz, Edge case or Style.',
-    '- A box indented under another box is inside it: the outer box is a step made of smaller parts. A box marked (collapsed) is only folded up on my canvas and is still part of the program.',
-    '- (step N) is the run order. Boxes without one follow the arrows, otherwise the order listed. Boxes are listed in reading order: top to bottom, then left to right.',
-    '- "Flow: A → B" means the result of A feeds B.',
-    '- LAYOUT, when present, summarizes how I arranged the boxes on the canvas. Columns run left to right and usually mean sequence or phases; rows run top to bottom.',
-    '- "@(x,y) WxH" at the end of a line is only where I placed the box. Ignore it when writing the steps; it is only useful for placing boxes in the diagram.',
-    '- An Edge case box describes something that can go wrong, so handle it. A Style box sets rules for how code and explanations are written, so follow it everywhere.',
-    '- A box labeled Detail is not a step. It is one fact about the box it sits in: its title names the question (Source, Fields, Repeat for each, Mark, x, y, ...) and its text is my answer. Treat the answers as part of the outer box\'s instructions, and do not write a code cell for a Detail box. An Insight detail is something I want to learn from that box: after its code, add a print, check or chart that answers it, and a markdown cell with the question for me to answer in words. For a Data viz box, x, y and Color by are chart encodings in the style of Vega-Lite or Altair (field plus type: quantitative, nominal, ordinal or temporal), so prefer Altair. If Altair is not well suited to the chart I asked for (a treemap, say), use plotly express or seaborn instead without asking, and do not force Altair.',
-    '',
-    'WHAT TO PRODUCE',
-    '- One code cell per step, in run order, with a short markdown cell before each group naming the outer box it belongs to. A step is a box with no boxes inside it, or a box whose contents are only Detail boxes.',
-    '- Write for high school beginners. Use simple, plain code: no regular expressions and no advanced Python patterns. Put a friendly markdown cell before each step that says in plain words what the next cell does and why, and keep comments in the code short and kind.',
-    '- Real data is messy, and I may not have listed every problem. Before converting any column, look at it for blanks and placeholder values such as a dash or "N/A". Never let a conversion crash the notebook, and never drop a row because one value will not convert: turn that value into a blank (NaN or NaT), keep the row, and say in a markdown cell how many values were affected. Wherever my deck names a bad value (in an Exceptions or Change type answer, say), handle exactly what it says.',
-    '- Do not invent steps that are not in the deck. If something is ambiguous, ask me before guessing.',
-    '- Make the first cell a code cell that draws the spec deck as a diagram image with matplotlib: one rounded box per deck box with its title inside, boxes that are inside another box drawn nested, a fill color by label (Goal purple, Data blue, Process yellow, File green, Data viz teal, Edge case orange, Style gray), small lines of text for Detail boxes, and an arrow for each Flow line. Use the @(x,y) WxH positions when they are given, otherwise lay the boxes out left to right. The cell must run without errors. Do not put the deck text itself in the notebook.'
-  ].join('\n');
-  const CT_NOTE = '- Computational thinking: where the deck calls for one of these ideas, add a one-sentence markdown note above that code naming it, and nothing more. Iteration: a "Repeat for each" prompt. Conditionals: an "Only if" prompt or an Edge case box. Data types: the types written in a "Fields" prompt. Objects and attributes: a "One row is a" prompt and its fields. Do not add an idea the deck does not mention.';
+  const KIT = {"request": ["This is a spec deck: a plain-text outline of a data-science program that I drew as boxes on a canvas. Please turn it into a Google Colab notebook in Python.", "", "HOW TO READ IT", "- \"# Name\" is the deck. Each \"- Label: Title\" line is a box (\"- Title\" if it has no label). The indented lines under a box are its instructions. Labels are words I chose, such as Goal, Data, Process, File, Data viz, Edge case or Style.", "- A box indented under another box is inside it: the outer box is a step made of smaller parts. A box marked (collapsed) is only folded up on my canvas and is still part of the program.", "- (step N) is the run order. Boxes without one follow the arrows, otherwise the order listed. Boxes are listed in reading order: top to bottom, then left to right.", "- \"Flow: A → B\" means the result of A feeds B.", "- LAYOUT, when present, summarizes how I arranged the boxes on the canvas. Columns run left to right and usually mean sequence or phases; rows run top to bottom.", "- DIAGRAM (SVG), when present, is a ready-made picture of the whole deck, drawn from my canvas. It is for the notebook's first cell only. It is not a step and not part of the program.", "- \"@(x,y) WxH\" at the end of a line is only where I placed the box. Ignore it when writing the steps; it is only useful for placing boxes in the diagram.", "- An Edge case box describes something that can go wrong, so handle it. A Style box sets rules for how code and explanations are written, so follow it everywhere.", "- A box labeled Detail is not a step. It is one fact about the box it sits in: its title names the question (Source, Fields, Repeat for each, Mark, x, y, ...) and its text is my answer. Treat the answers as part of the outer box's instructions, and do not write a code cell for a Detail box. An Insight detail is something I want to learn from that box: after its code, add a print, check or chart that answers it, and a markdown cell with the question for me to answer in words. For a Data viz box, x, y and Color by are chart encodings in the style of Vega-Lite or Altair (field plus type: quantitative, nominal, ordinal or temporal), so prefer Altair. If Altair is not well suited to the chart I asked for (a treemap, say), use plotly express or seaborn instead without asking, and do not force Altair.", "", "WHAT TO PRODUCE", "- One code cell per step, in run order, with a short markdown cell before each group naming the outer box it belongs to. A step is a box with no boxes inside it, or a box whose contents are only Detail boxes.", "- Write for high school beginners. Use simple, plain code: no regular expressions and no advanced Python patterns. Put a friendly markdown cell before each step that says in plain words what the next cell does and why, and keep comments in the code short and kind.", "- Real data is messy, and I may not have listed every problem. Before converting any column, look at it for blanks and placeholder values such as a dash or \"N/A\". Never let a conversion crash the notebook, and never drop a row because one value will not convert: turn that value into a blank (NaN or NaT), keep the row, and say in a markdown cell how many values were affected. Wherever my deck names a bad value (in an Exceptions or Change type answer, say), handle exactly what it says.", "- Do not invent steps that are not in the deck. If something is ambiguous, ask me before guessing.", "- Make the first cell a code cell that shows the spec deck diagram. Copy the SVG from the DIAGRAM (SVG) section at the end of this message exactly as given, with no changes, into a triple-quoted string named svg, and show it with `from IPython.display import SVG, display` and `display(SVG(data=svg))`. Do not write drawing code, and do not redraw or improve the picture: the cell holds the picture and nothing else. Make the first line of the cell `#@title Spec deck diagram`, so Colab can hide the code and show only the picture. If you are producing the notebook file itself, also set that cell's metadata to `\"cellView\": \"form\"` so the code starts hidden. The cell must run without errors. Do not put the deck text itself in the notebook."], "ctNote": "- Computational thinking: where the deck calls for one of these ideas, add a one-sentence markdown note above that code naming it, and nothing more. Iteration: a \"Repeat for each\" prompt. Conditionals: an \"Only if\" prompt or an Edge case box. Data types: the types written in a \"Fields\" prompt. Objects and attributes: a \"One row is a\" prompt and its fields. Do not add an idea the deck does not mention.", "labels": [["Goal", "#cdb4f6", "🟪"], ["Data", "#a8cdf4", "🟦"], ["Process", "#fbe08a", "🟨"], ["File", "#b4e29a", "🟩"], ["Data viz", "#8fd8cf", "🟢"], ["Edge case", "#fdba93", "🟧"], ["Style", "#dcdce4", "⬜"]], "alias": {"parsing": "process", "model": "process", "train": "process", "edge": "edge case", "output": "file", "chart": "data viz", "viz": "data viz", "visualization": "data viz", "prompt": "detail"}, "prompts": {"goal": ["Audience:", "Success looks like:"], "data": ["Source:", "One row is a:", "Fields (name – type):", "Exceptions:"], "process": ["Add column:", "Change type:", "Count:", "Filter rows:", "Group by:", "Handle missing values:", "Merge with:", "Pivot:", "Remove duplicates:", "Rename column:", "Select columns:", "Sort by:", "Transform values:"], "file": ["Format:", "One row is a:", "Fields (name – type):", "Save as:"], "data viz": ["Mark:", "x (field – type):", "y (field – type):", "color (field – type):", "size (field – type):", "shape (field – type):", "opacity (field – type):", "tooltip (field – type):", "text (field – type):", "row (field – type):", "column (field – type):", "facet (field – type):", "detail (field – type):", "order (field – type):", "x2 (field – type):", "y2 (field – type):", "fill (field – type):", "stroke (field – type):", "strokeWidth (field – type):", "strokeDash (field – type):", "theta (field – type):", "radius (field – type):", "angle (field – type):", "href (field – type):", "Aggregate or filter:", "Title:"], "edge case": ["If:", "Then:", "Applies to:"], "style": ["Code:", "Avoid:", "Explanations:"]}, "starters": {"data viz": ["Mark:", "x (field – type):", "y (field – type):"]}, "chartTypes": ["Bar chart", "Histogram", "Line chart", "Scatterplot", "Scatterplot matrix", "Box plot", "Heatmap", "Pie chart", "Treemap", "Choropleth map", "Bubble map"], "common": ["Mark", "x (", "y (", "color", "size", "shape", "tooltip", "Aggregate", "Title", "Insight"], "repeats": ["chart type", "filter rows", "merge with", "add column", "transform values", "rename column", "change type", "handle missing values"]};   // the prompts and Copy for AI wording come from prompts.json, put here by the build
+  const REQUEST = KIT.request.join('\n');
+  const CT_NOTE = KIT.ctNote;
   const requestText = ct => { const i = REQUEST.indexOf('\n- Make the first cell'); return ct ? REQUEST.slice(0, i) + '\n' + CT_NOTE + REQUEST.slice(i) : REQUEST; };
   const $ = id => document.getElementById(id);
   // Label -> color. The color is never stored: it always follows the label word.
-  const LABELS = [['Goal', '#cdb4f6', '🟪'], ['Data', '#a8cdf4', '🟦'], ['Process', '#fbe08a', '🟨'], ['File', '#b4e29a', '🟩'], ['Data viz', '#8fd8cf', '🟢'], ['Edge case', '#fdba93', '🟧'], ['Style', '#dcdce4', '⬜']];
-  const ALIAS = { parsing:'process', model:'process', train:'process', edge:'edge case', output:'file', chart:'data viz', viz:'data viz', visualization:'data viz', prompt:'detail' };
+  const LABELS = KIT.labels;
+  const ALIAS = KIT.alias;
   // Optional prompts for each type. "Add detail boxes" puts one small box per prompt inside the box; the answer is that box's text.
-  const PROMPTS = {
-    'goal':      ['Audience:', 'Success looks like:'],
-    'data':      ['Source:', 'One row is a:', 'Fields (name – type):', 'Exceptions:'],
-    'process':   ['Add column:', 'Change type:', 'Count:', 'Filter rows:', 'Group by:', 'Handle missing values:', 'Merge with:', 'Pivot:', 'Remove duplicates:', 'Rename column:', 'Select columns:', 'Sort by:', 'Transform values:'],
-    'file':      ['Format:', 'One row is a:', 'Fields (name – type):', 'Save as:'],
-    'data viz':  ['Mark:', 'x (field – type):', 'y (field – type):', 'color (field – type):', 'size (field – type):', 'shape (field – type):', 'opacity (field – type):', 'tooltip (field – type):', 'text (field – type):', 'row (field – type):', 'column (field – type):', 'facet (field – type):', 'detail (field – type):', 'order (field – type):', 'x2 (field – type):', 'y2 (field – type):', 'fill (field – type):', 'stroke (field – type):', 'strokeWidth (field – type):', 'strokeDash (field – type):', 'theta (field – type):', 'radius (field – type):', 'angle (field – type):', 'href (field – type):', 'Aggregate or filter:', 'Title:'],
-    'edge case': ['If:', 'Then:', 'Applies to:'],
-    'style':     ['Code:', 'Avoid:', 'Explanations:']
-  };
-  const STARTERS = { 'data viz': ['Mark:', 'x (field – type):', 'y (field – type):'] };
+  const PROMPTS = KIT.prompts;
+  const STARTERS = KIT.starters;
   const showLab = it => lab(it) === 'Detail' ? '' : lab(it);  // Detail boxes are recognised by the AI header, so no chip is drawn on them
   const kindKey = it => { const k = lab(it).toLowerCase(); return ALIAS[k] || k; };
-  const CHART_TYPES = ['Bar chart', 'Histogram', 'Line chart', 'Scatterplot', 'Scatterplot matrix', 'Box plot', 'Heatmap', 'Pie chart', 'Treemap', 'Choropleth map', 'Bubble map'];
+  const CHART_TYPES = KIT.chartTypes;
   const promptsFor = it => { let k = lab(it).toLowerCase(); k = ALIAS[k] || k; const ps = PROMPTS[k]; return ps ? (k === 'process' ? ps : ps.concat(['Insight:'], k === 'data viz' ? CHART_TYPES.map(t => 'Chart type=' + t) : [])) : []; };
   // A prompt like "Chart type=Bar chart" makes a Detail box titled "Chart type" with the text already filled in.
-  const COMMON = ['Mark', 'x (', 'y (', 'color', 'size', 'shape', 'tooltip', 'Aggregate', 'Title', 'Insight'];
+  const COMMON = KIT.common;
   const pName = p => p.split('=')[0].replace(/:$/, '');
   const colorOf = it => { let k = lab(it).toLowerCase(); k = ALIAS[k] || k; const m = LABELS.find(x => x[0].toLowerCase() === k); return m ? m[1] : ''; };
   const lab = it => ((it && it.label) || '').trim();
@@ -635,7 +609,7 @@
     return ds.slice(0, 3).map(x => x.name.replace(/ \(.*/, '') + ': ' + x.text.trim().split('\n')[0]).join(' · ');
   }
   // Operations a program can do more than once (one box per column, say) stay in the menu after one is added.
-  const REPEATS = new Set(['chart type', 'filter rows', 'merge with', 'add column', 'transform values', 'rename column', 'change type', 'handle missing values']);
+  const REPEATS = new Set(KIT.repeats);
   const isRep = p => REPEATS.has(pName(p).toLowerCase());
   const haveOf = (d, it) => new Set(d.items.filter(x => x.parent === it.id).map(x => x.name.toLowerCase()));
   const leftOf = (d, it) => { const have = haveOf(d, it); return promptsFor(it).filter(p => isRep(p) || !have.has(pName(p).toLowerCase())); };
@@ -1250,7 +1224,8 @@
       }
     }
     const notes = $('hdr').checked ? layoutNotes(d) : '';
-    return ($('hdr').checked ? requestText($('ct').checked) + '\n\n' + (notes ? 'LAYOUT (how the boxes are arranged on my canvas)\n' + notes + '\n\n' : '') : '') + toText(d, o);
+    const svg = $('hdr').checked ? deckSVG(d) : '';
+    return ($('hdr').checked ? requestText($('ct').checked) + '\n\n' + (notes ? 'LAYOUT (how the boxes are arranged on my canvas)\n' + notes + '\n\n' : '') : '') + toText(d, o) + (svg ? '\n\nDIAGRAM (SVG)\n' + svg : '');
   }
   let outEdited = false;
   function refreshText(){
@@ -1506,6 +1481,49 @@
     let ok = false;
     cvs.toBlob(b => { if (b) ok = downloadBlob(slug(d.name) + (root ? '-' + slug(root.name) : '') + '.png', b); }, 'image/png');
     return true;
+  }
+  // ---- the deck as an SVG picture (every box open) for the notebook's first cell ----
+  function deckSVG(d0){
+    const d = JSON.parse(JSON.stringify(d0));
+    if (!d.items.length) return '';
+    { const old = rectsNow(d); d.items.forEach(i => { delete i.collapsed; }); reflow(d, old); settle(d); }
+    const rs = d.items.map(vr), pad = 20;
+    const x0 = Math.min(...rs.map(r => r.x)) - pad, y0 = Math.min(...rs.map(r => r.y)) - pad;
+    const W = Math.max(...rs.map(r => r.x + r.w)) + pad - x0, H = Math.max(...rs.map(r => r.y + r.h)) + pad - y0;
+    const g = document.createElement('canvas').getContext('2d'), F = 'sans-serif';
+    const X = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&apos;');
+    const wrap = (text, w, font) => { g.font = font; const out = []; String(text).split('\n').forEach(par => { let line = ''; par.split(/\s+/).filter(Boolean).forEach(wd => { while (g.measureText(wd).width > w && wd.length > 1){ let k = wd.length - 1; while (k > 1 && g.measureText(wd.slice(0, k)).width > w) k--; if (line){ out.push(line); line = ''; } out.push(wd.slice(0, k)); wd = wd.slice(k); } const t2 = line ? line + ' ' + wd : wd; if (g.measureText(t2).width > w && line){ out.push(line); line = wd; } else line = t2; }); out.push(line); }); return out; };
+    const fit1 = (t2, w, font) => { g.font = font; if (g.measureText(t2).width <= w) return t2; while (t2.length > 1 && g.measureText(t2 + '…').width > w) t2 = t2.slice(0, -1); return t2 + '…'; };
+    const n = v => Math.round(v), tx = (x, y, s, size, wt, fill) => "<text x='" + n(x) + "' y='" + n(y) + "' font-size='" + size + "'" + (wt ? " font-weight='bold'" : '') + " fill='" + fill + "'>" + X(s) + '</text>';
+    const o = [];
+    o.push("<svg xmlns='http://www.w3.org/2000/svg' width='" + n(Math.min(W, 1000)) + "' height='" + n(Math.min(W, 1000) * H / W) + "' viewBox='" + n(x0) + ' ' + n(y0) + ' ' + n(W) + ' ' + n(H) + "' font-family='" + F + "'>");
+    o.push("<defs><marker id='ah' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='8' markerHeight='8' orient='auto'><path d='M0,0L10,5L0,10z' fill='#3b4148'/></marker></defs>");
+    o.push("<rect x='" + n(x0) + "' y='" + n(y0) + "' width='" + n(W) + "' height='" + n(H) + "' fill='#ffffff'/>");
+    d.items.filter(i => i.kind === 'frame').sort((a, b) => b.w * b.h - a.w * a.h).forEach(f => {
+      const r = vr(f), cnt = descendants(d, f).length, nm = fit1(f.name, r.w - 24, 'bold 15px ' + F);
+      o.push("<rect x='" + n(r.x) + "' y='" + n(r.y) + "' width='" + n(r.w) + "' height='" + n(r.h) + "' rx='12' fill='#f6f5f0' stroke='#9a9784' stroke-width='2' stroke-dasharray='7 5'/>");
+      o.push("<rect x='" + n(r.x + 1) + "' y='" + n(r.y + 1) + "' width='" + n(r.w - 2) + "' height='" + (FHEAD - 6) + "' rx='10' fill='" + (colorOf(f) || '#ececE6') + "'/>");
+      o.push(tx(r.x + 12, r.y + 22, nm, 15, 1, '#1f2328'));
+      g.font = 'bold 15px ' + F; const nw = g.measureText(nm).width, meta = (f.step ? 'step ' + f.step + ' · ' : '') + (lab(f) ? lab(f) + ' · ' : '') + plural(cnt, 'box');
+      g.font = '12px ' + F; if (nw + 20 + g.measureText(meta).width < r.w - 12) o.push(tx(r.x + 22 + nw, r.y + 22, meta, 12, 0, '#5b636b'));
+      if ((f.text || '').trim()){ let y = r.y + FHEAD + 12; wrap(f.text, r.w - 24, '12px ' + F).forEach(l => { if (y < r.y + hdOf(f)){ o.push(tx(r.x + 12, y, l, 12, 0, '#3b4148')); } y += 15; }); }
+    });
+    const m = mapOf(d);
+    d.links.forEach(l => {
+      const a = m.get(l.a), b = m.get(l.b); if (!a || !b || a === b) return;
+      const ra = vr(a), rb = vr(b), p = edge(ra, { x:rb.x + rb.w / 2, y:rb.y + rb.h / 2 }), q = edge(rb, { x:ra.x + ra.w / 2, y:ra.y + ra.h / 2 });
+      o.push("<line x1='" + n(p.x) + "' y1='" + n(p.y) + "' x2='" + n(q.x) + "' y2='" + n(q.y) + "' stroke='#3b4148' stroke-width='2.2' marker-end='url(#ah)'/>");
+    });
+    d.items.filter(i => i.kind === 'card').forEach(it => {
+      const r = vr(it), head = ((it.step ? 'step ' + it.step + ' ' : '') + showLab(it)).toUpperCase();
+      o.push("<rect x='" + n(r.x) + "' y='" + n(r.y) + "' width='" + n(r.w) + "' height='" + n(r.h) + "' rx='8' fill='" + (colorOf(it) || '#ffffff') + "' stroke='#888888' stroke-width='1'/>");
+      let y = r.y + 8;
+      if (head){ o.push(tx(r.x + 9, y + 9, head, 10, 1, '#5b636b')); y += 14; }
+      wrap(it.name, r.w - 18, 'bold 14px ' + F).forEach(l => { if (y + 13 < r.y + r.h){ o.push(tx(r.x + 9, y + 13, l, 14, 1, '#1f2328')); } y += 18; });
+      if (it.text){ y += 2; wrap(it.text, r.w - 18, '12px ' + F).forEach(l => { if (y + 11 < r.y + r.h){ o.push(tx(r.x + 9, y + 11, l, 12, 0, '#3b4148')); } y += 15; }); }
+    });
+    o.push('</svg>');
+    return o.join('\n');
   }
   $('dlImg').onclick = () => { if (state.ix < 0) return; saveImage(null); $('menuMsg').textContent = 'Image saved to your downloads (if your browser allows downloads here).'; };
   $('dlPage').onclick = savePage; $('saveBtn').onclick = savePage;
