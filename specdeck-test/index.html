@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="file-id" content="poolish-test">
+<meta name="build" content="2p-test-1124">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec Deck</title>
+<style>
+  :root { color-scheme: light; --ink:#1f2328; --muted:#5b636b; --line:#d8d6cc; --bg:#faf9f5; --card:#fff; --accent:#2f5fb3; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font:14.5px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); overflow:hidden; }
+  button, input, select, textarea { font:inherit; color:var(--ink); }
+  button { cursor:pointer; }
+  #app { display:flex; flex-direction:column; height:100vh; min-height:560px; }
+  #top { display:flex; align-items:center; gap:8px; padding:7px 12px; border-bottom:1px solid var(--line); background:#fff; flex-wrap:wrap; }
+  #top .sp { flex:0 0 0; }
+  #savedNote { flex:1 1 0; min-width:40px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #top .menu { margin-left:auto; }
+  #top h1 { font-size:16px; margin:0 6px 0 2px; white-space:nowrap; }
+  .btn { background:#fff; border:1px solid var(--line); border-radius:8px; padding:5px 10px; }
+  .btn:hover:not(:disabled) { border-color:var(--accent); background:#f3f7ff; }
+  .btn:disabled { opacity:.4; cursor:default; }
+  .btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .btn.primary:hover { background:#244c93; }
+  .btn.danger { color:#a12626; border-color:#e3b5b5; }
+  #deckName { font-weight:600; font-size:15px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; min-width:140px; width:190px; max-width:300px; background:#fff; }
+  #deckName:hover, #deckName:focus { border-color:var(--accent); }
+  #deckFolder { font-size:13.5px; border:1px solid var(--line); border-radius:8px; padding:4px 8px; width:104px; background:#fff; }
+  #deckFolder:hover, #deckFolder:focus { border-color:var(--accent); }
+  .menu { position:relative; }
+  .menu > summary { list-style:none; cursor:pointer; padding:5px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  .menu > summary::-webkit-details-marker { display:none; }
+  .menu .pop { position:absolute; right:0; top:34px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 6px 24px #0002; padding:6px; z-index:50; display:flex; flex-direction:column; gap:4px; min-width:230px; }
+  .menu .pop .btn { text-align:left; }
+  .filebtn { position:relative; overflow:hidden; display:block; }
+  .filebtn input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+  #homeView { flex:1; overflow:auto; padding:10px 20px 20px; display:none; }
+  #homeView p { color:var(--muted); margin:2px 0 6px; }
+  #homeSvg { display:block; margin:0 auto; }
+  #homeSvg g.deck:hover circle.main { stroke:var(--accent); stroke-width:3; }
+  #homeSvg .del, #homeSvg .cp { opacity:.45; cursor:pointer; }
+  #homeSvg g.deck:hover .del, #homeSvg g.deck:hover .cp, #homeSvg .del.armed { opacity:1; }
+  #work { flex:1; display:flex; min-height:0; }
+  #addbar { position:absolute; left:10px; top:10px; display:flex; gap:6px; z-index:20; }
+  #cv { position:relative; flex:1; overflow:hidden; background:#efede4; background-image:radial-gradient(#cfcbbb 1px, transparent 1px); background-size:24px 24px; touch-action:none; cursor:default; }
+  #cv.panning { cursor:grabbing; }
+  #world { position:absolute; left:0; top:0; transform-origin:0 0; }
+  #links { position:absolute; left:0; top:0; width:1px; height:1px; overflow:visible; z-index:2; pointer-events:none; }
+  #links .lk { pointer-events:stroke; cursor:pointer; }
+  .frame { position:absolute; border:2px dashed #9a9784; border-radius:12px; background:#ffffff59; pointer-events:none; z-index:1; }
+  .frame.sel { border-color:var(--accent); border-style:solid; }
+  .ft { position:absolute; left:0; top:0; right:0; height:32px; padding:6px 12px; font-weight:700; background:#0000000d; border-radius:10px 10px 0 0; pointer-events:auto; cursor:grab; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; }
+  .ft span { font-weight:400; color:var(--muted); font-size:12px; margin-left:8px; }
+  .frame.collapsed { pointer-events:auto; cursor:grab; background:#fff; border:2px solid #8a8878; border-style:solid; box-shadow:4px 4px 0 #0002, 8px 8px 0 #0001; z-index:3; }
+  .frame.collapsed.sel { border-color:var(--accent); }
+  .ctile { position:absolute; inset:0; padding:8px 12px 6px 38px; overflow:hidden; border-radius:10px; user-select:none; }
+  .ctile .cn { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-top:2px; }
+  .ctile .cn .ttl { display:block; overflow:hidden; text-overflow:ellipsis; }
+  .ctile .tg { line-height:13px; height:13px; margin-bottom:2px; }
+  .ctile .cn span { font-weight:400; color:var(--muted); font-size:12px; margin-left:6px; }
+  .ctile .dots { display:flex; gap:3px; margin-top:6px; }
+  .ctile .dots i { width:11px; height:11px; border-radius:3px; border:1px solid #0003; display:block; }
+  .ft { padding-right:12px; }
+  .ffoot { position:absolute; left:8px; bottom:6px; display:flex; gap:6px; pointer-events:auto; z-index:4; }
+  .ffoot .fdet, .ffoot .fadd { position:static; width:auto; height:22px; min-width:28px; padding:0 8px; font:600 12px/1 inherit; border-style:dashed; border-color:#0006; background:#ffffffcc; }
+  .ffoot .fdet:hover, .ffoot .fadd:hover { background:#fff; border-style:solid; }
+  .fadd { position:absolute; right:8px; top:4px; width:24px; height:24px; padding:0; border:1px solid #0003; border-radius:6px; background:#fff; font:700 16px/1 inherit; cursor:pointer; color:var(--ink); }
+  .fdet { position:absolute; right:40px; top:4px; height:24px; padding:0 8px; border:1px solid #0003; border-radius:6px; background:#fff; font:600 12px/1 inherit; cursor:pointer; color:var(--ink); }
+  .cdet { position:absolute; left:8px; bottom:6px; height:22px; min-width:28px; padding:0 8px; border:1px dashed #0006; border-radius:6px; background:#ffffffcc; font:600 12px/1 inherit; cursor:pointer; color:var(--ink); z-index:4; }
+  .fdet:hover, .cdet:hover { background:#fff; border-style:solid; }
+  .ffoot .fdet { display:flex; align-items:center; justify-content:center; }
+  .ffoot .fdet.star { font:700 20px/1 system-ui,sans-serif; padding:6px 8px 0; }
+  #detmenu { position:fixed; z-index:200; width:240px; max-height:300px; overflow:auto; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 6px 24px #0003; padding:6px; display:flex; flex-direction:column; gap:2px; }
+  #detmenu button { text-align:left; padding:6px 10px; border:0; border-radius:6px; background:none; font:inherit; cursor:pointer; }
+  #detmenu .gh { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#5b6470; padding:8px 10px 2px; }
+  #detmenu .rare[hidden] { display:none; } #detmenu .rare { display:flex; flex-direction:column; gap:2px; } #detmenu button.moreenc { color:#5b6470; font-size:13px; }
+  #detmenu button:hover { background:#eef2fb; }
+  #detmenu button.blank { border-bottom:1px solid var(--line); border-radius:6px 6px 0 0; margin-bottom:2px; }
+  #detmenu button.all { font-weight:700; border-bottom:1px solid var(--line); border-radius:6px 6px 0 0; }
+  .fadd:hover { background:#f1f3f4; }
+  .card { background:#fff; }
+  .fsum { position:absolute; left:12px; right:12px; top:38px; height:14px; font-size:11px; color:#000a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+  .ctile .sub { font-size:12px; line-height:15px; color:var(--muted); margin-top:3px; white-space:normal; overflow:hidden; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; }
+  .ft .ttl, .cn .ttl { font-weight:inherit; }
+  .sel .ttl { cursor:text; }
+  .ttl.ph { color:#6b7178; font-style:italic; }
+  .ttl.ph[contenteditable="true"] { color:inherit; font-style:normal; }
+  .ttl[contenteditable="true"] { outline:2px solid var(--accent); outline-offset:1px; border-radius:3px; background:#fff; cursor:text; user-select:text; -webkit-user-select:text; text-overflow:clip; }
+  #empty { position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; pointer-events:none; z-index:5; }
+  #empty > div { background:#fffc; border-radius:12px; padding:18px 22px; }
+  #empty button { pointer-events:auto; }
+  #empty p { margin:10px 0 0; color:var(--muted); font-size:13px; }
+  .tgl { border:0; background:none; padding:0 7px 0 0; font-size:18px; line-height:1; cursor:pointer; color:var(--ink); }
+  .ctile .tgl { position:absolute; left:10px; top:14px; padding:0; font-size:24px; }
+  .card { position:absolute; border:1px solid #0004; border-radius:8px; box-shadow:0 1px 3px #0003; cursor:grab; user-select:none; z-index:3; }
+  .card .ctg { position:absolute; left:10px; top:14px; padding:0; font-size:24px; opacity:.85; z-index:2; }
+  /* open plain box: same title position and type size as the collapsed tile, so the toggle and title line up either way */
+  .card .in.ci { padding-top:8px; }
+  .card .in.ci .tg { margin-left:29px; line-height:13px; height:13px; margin-bottom:2px; }
+  .card .in.ci .stp { line-height:11px; }
+  .card .in.ci .nm { margin-left:29px; font-size:14.5px; line-height:1.4; padding-top:2px; }
+  .card .ctg:hover { opacity:1; }
+  .card.sel { outline:2px solid var(--accent); outline-offset:2px; }
+  .card .in { position:absolute; inset:0; overflow:hidden; border-radius:7px; padding:6px 9px 16px; -webkit-mask-image:linear-gradient(#000 calc(100% - 16px), transparent); mask-image:linear-gradient(#000 calc(100% - 16px), transparent); }
+  .card.hd .in { bottom:30px; }
+  .tg { font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#3b4148; }
+  .stp { float:right; font-size:10.5px; font-weight:700; background:#ffffffb8; border:1px solid #0003; border-radius:99px; padding:0 6px; }
+  .nm { font-weight:700; font-size:13.5px; line-height:1.25; }
+  .bd { font-size:12.5px; color:#2b3036; margin-top:3px; white-space:pre-wrap; }
+  .bd.empty { min-height:30px; }
+  .ftxt { position:absolute; left:12px; right:12px; top:38px; font-size:12.5px; line-height:16px; color:#2b3036; white-space:pre-wrap; overflow:hidden; pointer-events:auto; z-index:4; cursor:grab; }
+  .ftxt textarea { display:block; width:100%; height:100%; margin:0; padding:0; border:0; outline:0; background:transparent; resize:none; overflow:auto; font:inherit; line-height:inherit; color:inherit; user-select:text; -webkit-user-select:text; cursor:text; }
+  .bd textarea { display:block; width:100%; margin:0; padding:0; border:0; outline:0; background:transparent; resize:none; overflow:hidden; font:inherit; color:inherit; user-select:text; -webkit-user-select:text; cursor:text; }
+  .h { position:absolute; width:12px; height:12px; background:#fff; border:2px solid var(--accent); border-radius:3px; z-index:6; pointer-events:auto; transform:translate(-50%,-50%) scale(var(--ik,1)); }
+  .h.nw { left:0; top:0; cursor:nwse-resize; } .h.se { left:100%; top:100%; cursor:nwse-resize; }
+  .h.ne { left:100%; top:0; cursor:nesw-resize; } .h.sw { left:0; top:100%; cursor:nesw-resize; }
+  .h.link { left:100%; top:50%; width:18px; height:18px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; line-height:14px; text-align:center; cursor:crosshair; transform:translate(calc(-50% + 18px * var(--ik,1)), -50%) scale(var(--ik,1)); }
+  #zoomctl { position:absolute; left:10px; bottom:10px; display:flex; gap:4px; align-items:center; background:#fffc; border:1px solid var(--line); border-radius:10px; padding:3px; z-index:20; }
+  #zoomctl span { min-width:42px; text-align:center; color:var(--muted); font-size:12.5px; }
+  #side { display:none; position:fixed; inset:0; background:#0006; z-index:60; align-items:center; justify-content:center; }
+  #side.open { display:flex; }
+  #dlgbox { position:relative; background:#fff; border-radius:12px; width:min(640px,94vw); max-height:88vh; display:flex; flex-direction:column; box-shadow:0 10px 40px #0005; min-height:0; }
+  #dlgx { position:absolute; right:8px; top:4px; border:0; background:none; font-size:26px; line-height:1; cursor:pointer; color:var(--muted); z-index:2; }
+  #dlgbox .tabs { padding-right:40px; }
+  #bar { position:absolute; z-index:25; display:flex; flex-direction:column; gap:6px; align-items:stretch; min-width:268px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 2px 10px #0003; padding:5px 6px; font-size:13px; white-space:nowrap; }
+  #bar[hidden] { display:none; }
+  #bar .r { display:flex; gap:6px; align-items:center; }
+  #bar .r > * { flex:1 1 auto; min-width:0; }
+  #bar .r > .btn { min-width:auto; white-space:nowrap; }
+  #bar .r input[type=number] { flex:0 0 66px; width:66px; }
+  #bar select, #bar input { border:1px solid var(--line); border-radius:7px; padding:4px 6px; background:#fff; font:inherit; }
+  #bar .more { position:absolute; top:100%; left:0; right:0; margin-top:6px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 4px 16px #0003; padding:4px 10px 10px; white-space:normal; }
+  #bar .more[hidden] { display:none; }
+  #bar.up .more { top:auto; bottom:100%; margin:0 0 6px; }
+  .tabs { display:flex; border-bottom:1px solid var(--line); }
+  .tabs button { flex:1; padding:9px 4px; border:0; background:none; border-bottom:3px solid transparent; font-weight:600; color:var(--muted); }
+  .tabs button.on { color:var(--ink); border-bottom-color:var(--accent); }
+  .pane { padding:12px 14px 16px; overflow-y:auto; flex:1; display:none; }
+  .pane.on { display:block; }
+  .pane h2 { font-size:15px; margin:0 0 6px; }
+  label.f { display:block; font-size:12.5px; color:var(--muted); margin-top:9px; }
+  label.f input[type=text], label.f input[type=number], label.f textarea, label.f select { display:block; width:100%; margin-top:2px; border:1px solid var(--line); border-radius:8px; padding:5px 8px; background:#fff; font-size:14px; }
+  textarea.mono { width:100%; font:12px/1.4 ui-monospace,Menlo,Consolas,monospace; border:1px solid var(--line); border-radius:8px; padding:8px; resize:vertical; background:#fff; }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:4px; }
+  .chipb { border:1px solid #0003; border-radius:99px; padding:2px 9px; font-size:12px; font-weight:600; }
+  .chipb.on { outline:2px solid var(--ink); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+  .muted { color:var(--muted); font-size:13px; }
+  .status { font-size:13px; color:#1a6b3a; min-height:18px; }
+  .err { color:#a12626; }
+  ul.tips { padding-left:18px; margin:8px 0; color:var(--muted); font-size:13px; }
+  ul.tips li { margin:3px 0; }
+  pre.ex { white-space:pre-wrap; font:12px/1.4 ui-monospace,Menlo,Consolas,monospace; background:#faf9f5; border:1px solid var(--line); border-radius:8px; padding:8px; margin:6px 0; color:var(--muted); }
+  #drop { display:none; position:fixed; inset:0; background:#2f5fb3cc; color:#fff; font-size:24px; align-items:center; justify-content:center; z-index:9999; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <h1>Spec Deck</h1>
+    <button class="btn" id="homeBtn">⌂ Decks</button>
+    <input id="deckName" type="text" aria-label="Deck name" placeholder="Deck name">
+    <input id="deckFolder" type="text" list="folderList" aria-label="Folder" placeholder="Folder" title="Decks with the same folder name are grouped on the Decks screen">
+    <datalist id="folderList"></datalist>
+    <span class="muted" id="savedNote" aria-live="polite"></span>
+    <span class="sp"></span>
+    <span id="deckTools" style="display:flex;gap:8px;align-items:center">
+      <button class="btn" id="undo" title="Undo (Ctrl/Cmd+Z)">↶</button>
+      <button class="btn" id="redo" title="Redo (Ctrl/Cmd+Shift+Z)">↷</button>
+      <button class="btn" id="tidy" title="Rearrange everything into neat columns">Tidy up</button>
+      <button class="btn" id="dlDeck2" title="Download this deck as a text file, to keep it or hand it in">Download deck</button>
+      <button class="btn" id="saveBtn" title="Download a copy of this page with all your decks inside it">Save a copy…</button>
+      <button class="btn primary" id="toAI">Copy for AI</button>
+    </span>
+    <details class="menu" id="menu"><summary>⋯</summary>
+      <div class="pop">
+        <span class="filebtn"><button class="btn" type="button" style="width:100%;text-align:left">Load deck text or notebook…</button><input type="file" id="file" accept=".txt,.md,.json,.ipynb,text/plain,application/json" aria-label="Load a deck text file, JSON file or notebook"></span>
+        <button class="btn" id="reset">Discard my changes (back to this file’s decks)</button>
+        <button class="btn" id="impBtn" title="Bring in decks saved by other copies of this app in this browser">Import decks from an older copy…</button>
+        <div id="impList"></div>
+        <button class="btn" id="txtBtn">Edit this deck as text…</button>
+        <button class="btn" id="dlDeck">Download this deck as a text file</button>
+        <button class="btn" id="dlImg">Save this deck as an image (PNG)</button>
+        <button class="btn" id="dlPage">Save a copy of this page with my decks inside</button>
+        <div class="muted" id="menuMsg" style="padding:2px 6px"></div>
+        <div class="muted" id="buildInfo" style="padding:2px 6px;font-size:11px"></div>
+        <button class="btn danger" id="delDeck">Delete this deck</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="homeView">
+    <p>Each circle is a deck. Click one to open its canvas, or start a new deck with the dashed circle.</p>
+    <svg id="homeSvg" role="group" aria-label="Decks"></svg>
+  </div>
+
+  <div id="work">
+    <div id="cv" aria-label="Canvas">
+      <div id="world"><svg id="links"></svg></div>
+      <div id="empty"><div><button class="btn primary" id="startBtn">Start with Goal, Data, Process, Data viz</button><p>or double-click anywhere to add a box</p></div></div>
+      <div id="bar" hidden></div>
+      <div id="addbar"><button class="btn primary" id="addCard" title="Add a box next to the selected one (or double-click empty canvas)">+ Box</button></div>
+      <div id="zoomctl"><button class="btn" id="zo" aria-label="Zoom out">−</button><span id="zl">100%</span><button class="btn" id="zi" aria-label="Zoom in">+</button><button class="btn" id="fit">Fit</button><button class="btn" id="colAll" title="Collapse every box that has others inside">Collapse all</button><button class="btn" id="expAll" title="Expand every box">Expand all</button></div>
+    </div>
+    <div id="side"><div id="dlgbox"><button id="dlgx" aria-label="Close">×</button>
+      <div class="tabs"><button data-t="text">Text</button><button data-t="ai">For AI</button></div>
+      <div class="pane" id="pane-text">
+        <label class="f" style="margin-top:0">Deck description (optional)<textarea id="f-ddesc" rows="2" style="display:block;width:100%;margin-top:2px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;font:inherit"></textarea></label>
+        <h2 style="margin-top:12px">Deck as plain text</h2>
+        <p class="muted" style="margin:0">Same deck, written as an outline. <b>#</b> = deck, <b>- Label: Title</b> = a box with its text indented below, and boxes indented under it are inside it. <b>Flow: A → B</b> = arrow. Positions are the <code>@(x,y) wxh</code> at the end of a line and can be deleted.</p>
+        <textarea class="mono" id="txt" rows="22" spellcheck="false" aria-label="Deck as plain text" style="margin-top:8px"></textarea>
+        <p class="muted" style="margin:4px 0 0">Edits here only take effect when you press a button. Without positions, I lay the boxes out for you.</p>
+        <div class="row"><button class="btn" id="repl">Replace this deck</button><button class="btn" id="addj">Add as new deck</button><button class="btn" id="copyAll">Copy all decks</button></div>
+        <div class="status" id="tstatus" role="status"></div>
+      </div>
+      <div class="pane" id="pane-ai">
+        <h2>Hand this to an AI</h2>
+        <p class="muted" style="margin:0">Text carries every box and arrow; a screenshot of a big deck loses detail.</p>
+        <label class="f">What to include
+          <select id="mode">
+            <option value="whole">Whole deck, every box in full</option>
+            <option value="selection">Selected box in full, rest collapsed</option>
+            <option value="titles">Whole deck, titles only</option>
+            <option value="json">Whole deck as JSON</option>
+            <option value="cell">Add this box to my open notebook (just the cell)</option>
+            <option value="change">Change a cell I already have</option>
+          </select></label>
+        <label class="f" id="varsRow" style="display:none">My variable names in the notebook (optional)<input type="text" id="vars" placeholder="for example: df is the cars table, top10 is the top ten"></label>
+        <label style="display:flex;gap:6px;align-items:center;margin-top:10px;font-size:13.5px"><input type="checkbox" id="hdr"> Start with a “write me a notebook” request</label>
+        <label style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:13.5px"><input type="checkbox" id="ct" checked> Ask the notebook to name computational-thinking ideas (iteration, conditionals, data types)</label>
+        <label style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:13.5px"><input type="checkbox" id="lay"> Include box positions (lets a notebook restore your layout)</label>
+        <div class="row"><button class="btn primary" id="copy">Copy text</button><span class="status" id="status" role="status"></span></div>
+        <textarea class="mono" id="out" rows="16" aria-label="Export text (you can edit it)" style="margin-top:8px"></textarea>
+      </div>
+    </div></div>
+  </div>
+</div>
+<div id="drop">Drop a deck file or notebook to add it</div>
+
+<script type="text/plain" id="seed"></script>
+<script>
+(function(){
+  const FILE_ID = (document.querySelector('meta[name=file-id]') || {}).content || 'web';
+  const KEY = FILE_ID === 'web' ? 'specdeck-v3' : 'specdeck-v4-' + FILE_ID;
+  { const bi = document.getElementById('buildInfo'); if (bi) bi.textContent = 'This file: build ' + ((document.querySelector('meta[name=build]') || {}).content || 'dev') + ' · save slot ' + FILE_ID; }
+  const KIT = {"request":["This is a spec deck: a plain-text outline of a data-science program that I drew as boxes on a canvas. Please turn it into a Jupyter notebook in Python that runs in any standard Jupyter (Google Colab, a local Jupyter, or a JupyterHub).","","HOW TO READ IT","- \"# Name\" is the deck. Each \"- Label: Title\" line is a box (\"- Title\" if it has no label). The indented lines under a box are its instructions. Labels are words I chose, such as Goal, Data, Process, File, Data viz, Edge case or Style.","- A box indented under another box is inside it: the outer box is a step made of smaller parts. A box marked (collapsed) is only folded up on my canvas and is still part of the program.","- (step N) is the run order. Boxes without one follow the arrows, otherwise the order listed. Boxes are listed in reading order: top to bottom, then left to right.","- \"Flow: A → B\" means the result of A feeds B.","- LAYOUT, when present, summarizes how I arranged the boxes on the canvas. Columns run left to right and usually mean sequence or phases; rows run top to bottom.","- DIAGRAM (SVG), when present, is a ready-made picture of the whole deck, drawn from my canvas. It is for the notebook's first cell only. It is not a step and not part of the program.","- \"@(x,y) WxH\" at the end of a line is only where I placed the box. Ignore it when writing the steps; it is only useful for placing boxes in the diagram.","- An Edge case box describes something that can go wrong, so handle it. A Style box sets rules for how code and explanations are written, so follow it everywhere.","- A box labeled Detail is not a step. It is one fact about the box it sits in: its title names the question (Source, Fields, Repeat for each, Mark, x, y, ...) and its text is my answer. Treat the answers as part of the outer box's instructions, and do not write a code cell for a Detail box. An Insight detail is something I want to learn from that box: after its code, add a print, check or chart that answers it, and a markdown cell with the question for me to answer in words. For a Data viz box, x, y and Color by are chart encodings in the style of Vega-Lite or Altair (field plus type: quantitative, nominal, ordinal or temporal), so prefer Altair. If Altair is not well suited to the chart I asked for (a treemap, say), use plotly express or seaborn instead without asking, and do not force Altair.","","WHAT TO PRODUCE","- One code cell per step, in run order, with a short markdown cell before each group naming the outer box it belongs to. A step is a box with no boxes inside it, or a box whose contents are only Detail boxes.","- Write for high school beginners. Use simple, plain code: no regular expressions and no advanced Python patterns. Put a friendly markdown cell before each step that says in plain words what the next cell does and why, and keep comments in the code short and kind.","- Real data is messy, and I may not have listed every problem. Before converting any column, look at it for blanks and placeholder values such as a dash or \"N/A\". Never let a conversion crash the notebook, and never drop a row because one value will not convert: turn that value into a blank (NaN or NaT), keep the row, and say in a markdown cell how many values were affected. Wherever my deck names a bad value (in an Exceptions or Change type answer, say), handle exactly what it says.","- Do not invent steps that are not in the deck. If something is ambiguous, ask me before guessing.","- Use ordinary Python and standard Jupyter only, so the notebook runs in any Jupyter setup. Do not use anything specific to Google Colab or to one platform: no google.colab imports, no mounting Google Drive, no `!pip install` or other shell lines, no `%` magics unless I ask. If a library beyond the usual ones (pandas, numpy, matplotlib, Altair) is needed, name it in a short markdown cell near the top. Read data from the file name or web address I give in the deck; if I gave none, say so in that markdown cell and put the file name in one clearly marked variable I can change.","- Make the first cell a code cell that shows the spec deck diagram. Copy the SVG from the DIAGRAM (SVG) section at the end of this message exactly as given, with no changes, into a triple-quoted string named svg, and show it with `from IPython.display import SVG, display` and `display(SVG(data=svg))`. Do not write drawing code, and do not redraw or improve the picture: the cell holds the picture and nothing else. Make the first line of the cell `#@title Spec deck diagram`: Google Colab uses it to hide the code and show only the picture, and in other Jupyter setups it is just a comment. If you are producing the notebook file itself, also set that cell's metadata to `\"cellView\": \"form\"` so the code starts hidden. The cell must run without errors. Do not put the deck text itself in the notebook."],"ctNote":"- Computational thinking: where the deck calls for one of these ideas, add a one-sentence markdown note above that code naming it, and nothing more. Iteration: a \"Repeat for each\" prompt. Conditionals: an \"Only if\" prompt or an Edge case box. Data types: the types written in a \"Fields\" prompt. Objects and attributes: a \"One row is a\" prompt and its fields. Do not add an idea the deck does not mention.","labels":[["Goal","#cdb4f6","🟪"],["Data","#a8cdf4","🟦"],["Process","#fbe08a","🟨"],["File","#b4e29a","🟩"],["Data viz","#8fd8cf","🟢"],["Edge case","#fdba93","🟧"],["Style","#dcdce4","⬜"]],"alias":{"parsing":"process","model":"process","train":"process","edge":"edge case","output":"file","chart":"data viz","viz":"data viz","visualization":"data viz","prompt":"detail"},"prompts":{"goal":["Audience:","Success looks like:"],"data":["Source:","One row is a:","Fields (name – type):","Exceptions:"],"process":["Add column:","Change type:","Count:","Filter rows:","Group by:","Handle missing values:","Merge with:","Pivot:","Remove duplicates:","Rename column:","Select columns:","Sort by:","Transform values:"],"file":["Format:","One row is a:","Fields (name – type):","Save as:"],"data viz":["Mark:","x (field – type):","y (field – type):","color (field – type):","size (field – type):","shape (field – type):","opacity (field – type):","tooltip (field – type):","text (field – type):","row (field – type):","column (field – type):","facet (field – type):","detail (field – type):","order (field – type):","x2 (field – type):","y2 (field – type):","fill (field – type):","stroke (field – type):","strokeWidth (field – type):","strokeDash (field – type):","theta (field – type):","radius (field – type):","angle (field – type):","href (field – type):","Aggregate or filter:","Title:"],"edge case":["If:","Then:","Applies to:"],"style":["Code:","Avoid:","Explanations:"]},"starters":{"data viz":["Mark:","x (field – type):","y (field – type):"]},"chartTypes":["Bar chart","Histogram","Line chart","Scatterplot","Scatterplot matrix","Box plot","Heatmap","Pie chart","Treemap","Choropleth map","Bubble map"],"common":["Mark","x (","y (","color","size","shape","tooltip","Aggregate","Title","Insight"],"repeats":["chart type","filter rows","merge with","add column","transform values","rename column","change type","handle missing values"],"cellRequest":["This is one box from a spec deck: a plain-text outline of a data-science program that I drew as boxes. I already have a Jupyter notebook open and working. Do not write a new notebook. Write only the cell or cells for the box named under THE BOX TO WRITE A CELL FOR below, ready for me to paste at the end of my notebook.","","HOW TO READ IT","- \"- Label: Title\" lines are boxes. Indented lines under a box are its instructions, and a box indented under another is inside it. A box labeled Detail is not a step: it is one fact about the box it sits in (its title is the question, its text is my answer), so use it and do not write a cell for it. An Insight detail is something I want to learn: after the code, add a print or chart that answers it, and a short markdown cell with the question for me to answer in words. An Edge case box describes something that can go wrong, so handle it. A Style box sets rules for how code and explanations are written.","- That box is shown in full (with its instructions and anything inside it). Other boxes are shown collapsed or as titles only, just as context so you can see where it fits.","- \"Flow: A → B\" means the result of A feeds B.","","WHAT TO PRODUCE","- Assume the earlier cells in my notebook have already run: reuse the variables and imports that are already there. Do not reload the data, do not start over, and do not repeat setup. Add an import only if this cell really needs one.","- If you need the name of a variable that neither the deck nor MY VARIABLES (below, if I wrote any) gives (the data frame, say), use a short obvious name such as df, and say in a one-line markdown cell that I can change it. If I listed names under MY VARIABLES, use exactly those.","- No diagram cell, no title cell, and no summary of the whole deck.","- Write for a high school beginner: simple, plain code, no regular expressions, no advanced Python patterns. Put a short friendly markdown cell before the code cell saying in plain words what it does and why.","- For a chart, prefer Altair. If Altair is not well suited to the chart I asked for (a treemap, say), use plotly express or seaborn instead without asking.","- Real data is messy: do not let a conversion crash, and do not drop a row because one value will not convert (make it missing and say how many were affected).","- Ordinary Python and standard Jupyter only: no google.colab, no `!pip install`, no `%` magics.","","(If no box is named below, tell me to select a box on my canvas first and stop.)"],"changeRequest":["This is one box from a spec deck: a plain-text outline of a data-science program that I drew as boxes. I already have a Jupyter notebook open and working, and it already has a cell for this box. Do not write a new notebook and do not add a new step. Change that one cell the way I describe under WHAT TO CHANGE below, and give me back the whole corrected cell, ready to paste over the old one.","","HOW TO READ IT","- \"- Label: Title\" lines are boxes. Indented lines under a box are its instructions, and a box indented under another is inside it. A box labeled Detail is not a step: it is one fact about the box it sits in (its title is the question, its text is my answer), so use it and do not write a cell for it. An Insight detail is something I want to learn: after the code, add a print or chart that answers it, and a short markdown cell with the question for me to answer in words. An Edge case box describes something that can go wrong, so handle it. A Style box sets rules for how code and explanations are written.","- That box is shown in full (with its instructions and anything inside it). Other boxes are shown collapsed or as titles only, just as context so you can see where it fits.","- \"Flow: A → B\" means the result of A feeds B.","","WHAT TO PRODUCE","- THE CELL AS IT IS NOW is the code that is in my notebook today, and WHAT TO CHANGE is what I want different. Make that change and keep everything else in the cell working as it does now. If WHAT TO CHANGE is empty, bring the cell in line with the box's instructions in the deck (the deck may have changed since the cell was written) and tell me what you changed.","- Give me the whole replacement cell in one code block, not just the lines that changed, so I can paste it over the old cell. Put a short friendly markdown note above it saying in plain words what you changed and why.","- Assume the earlier cells in my notebook have already run: reuse the variables and imports that are already there. Do not reload the data, do not start over, and do not repeat setup. Add an import only if the change really needs one.","- Keep the names of the variables the cell already creates, so the cells after it still work. If the change means a name has to change, or a new variable is made, say so in the note. If I listed names under MY VARIABLES, use exactly those.","- Write for a high school beginner: simple, plain code, no regular expressions, no advanced Python patterns. Keep the comments short and kind.","- For a chart, keep using the chart library the cell already uses. If I ask for a new chart, prefer Altair (plotly express or seaborn when Altair is not well suited, such as a treemap). Adding tooltips, labels or colors means changing the chart's encodings, not starting a new chart.","- Real data is messy: if the change is about missing values (NaN) or bad values, handle them the way I say, do not let a conversion crash, do not drop a row for one bad value unless I ask, and say how many rows were affected.","- Ordinary Python and standard Jupyter only: no google.colab, no `!pip install`, no `%` magics.","","(If no box is named below, tell me to select a box on my canvas first and stop. If the cell or the change below still shows its [bracketed] placeholder, ask me to fill it in and stop.)"]};   // the prompts and Copy for AI wording come from prompts.json, put here by the build
+  const REQUEST = KIT.request.join('\n');
+  const CT_NOTE = KIT.ctNote;
+  const CELL_REQUEST = KIT.cellRequest.join('\n');
+  const CHANGE_REQUEST = KIT.changeRequest.join('\n');
+  const requestText = ct => { const i = REQUEST.indexOf('\n- Make the first cell'); return ct ? REQUEST.slice(0, i) + '\n' + CT_NOTE + REQUEST.slice(i) : REQUEST; };
+  const $ = id => document.getElementById(id);
+  // Label -> color. The color is never stored: it always follows the label word.
+  const LABELS = KIT.labels;
+  const ALIAS = KIT.alias;
+  // Optional prompts for each type. "Add detail boxes" puts one small box per prompt inside the box; the answer is that box's text.
+  const PROMPTS = KIT.prompts;
+  const STARTERS = KIT.starters;
+  const showLab = it => lab(it) === 'Detail' ? '' : lab(it);  // Detail boxes are recognised by the AI header, so no chip is drawn on them
+  const kindKey = it => { const k = lab(it).toLowerCase(); return ALIAS[k] || k; };
+  const CHART_TYPES = KIT.chartTypes;
+  const promptsFor = it => { let k = lab(it).toLowerCase(); k = ALIAS[k] || k; const ps = PROMPTS[k]; return ps ? (k === 'process' ? ps : ps.concat(['Insight:'], k === 'data viz' ? CHART_TYPES.map(t => 'Chart type=' + t) : [])) : []; };
+  // A prompt like "Chart type=Bar chart" makes a Detail box titled "Chart type" with the text already filled in.
+  const COMMON = KIT.common;
+  const pName = p => p.split('=')[0].replace(/:$/, '');
+  const colorOf = it => { let k = lab(it).toLowerCase(); k = ALIAS[k] || k; const m = LABELS.find(x => x[0].toLowerCase() === k); return m ? m[1] : ''; };
+  const lab = it => ((it && it.label) || '').trim();
+  const cap = w => { w = String(w || '').trim(); return w ? w.charAt(0).toUpperCase() + w.slice(1) : ''; };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const plural = (k, w) => k + ' ' + (k === 1 ? w : (w === 'box' ? 'boxes' : w + 's'));
+  let uid = 0; const nid = () => 'i' + Date.now().toString(36) + (uid++);
+
+  const state = { lib:[], ix:-1, sel:null, barOn:false, v:{x:40,y:40,k:1}, hist:[], fut:[], tab:'edit' };
+  const deck = () => state.lib[state.ix];
+
+  // ================= plain-text format =================
+  const LAYOUT_RE = /\s+@\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*(\d+)\s*[x×]\s*(\d+)\s*$/;
+  function takeLayout(s){ const m = s.match(LAYOUT_RE); return m ? { s:s.slice(0, m.index), box:{x:+m[1], y:+m[2], w:+m[3], h:+m[4]} } : { s, box:null }; }
+
+  function parseBullet(str){
+    const tl = takeLayout(str); let t = tl.s, collapsed = false;
+    const cm = t.match(/\s*\(collapsed\)\s*$/i); if (cm){ collapsed = true; t = t.slice(0, cm.index); }
+    let label = '', step = 0, name = t.trim();
+    const m = t.match(/^([^:()]{0,30}?)\s*(?:\(\s*step\s*(\d+)\s*\))?\s*:(?:\s+(.*))?$/i);
+    if (m){ label = m[1].trim(); step = m[2] ? parseInt(m[2], 10) : 0; name = (m[3] || '').trim(); }
+    return { name:name || 'Untitled', label, step, collapsed, box:tl.box, text:'', children:[] };
+  }
+  function parseText(txt){
+    const flowRe = /^Flow:\s*(.+?)\s*(?:→|->)\s*(.+?)\s*$/i;
+    const decks = [], stack = [];
+    let cur = null, blanks = 0;
+    const bad = (i, m) => new Error('Line ' + (i + 1) + ': ' + m);
+    const unesc = l => l.replace(/^(\s*)\\- /, '$1- ');
+    txt.replace(/\r/g, '').split('\n').forEach((raw0, i) => {
+      const raw = raw0.replace(/\t/g, '  ');
+      const h = raw.match(/^(#{1,6})\s+(.*?)\s*$/);
+      if (h){
+        cur = null; blanks = 0;
+        const level = h[1].length, tl = takeLayout(h[2]), isCol = /\s*\(collapsed\)\s*$/i.test(tl.s);
+        const node = { name:tl.s.replace(/\s*\(collapsed\)\s*$/i, ''), label:'', text:'', children:[], box:tl.box, flows:[], collapsed:isCol };
+        if (level === 1){ decks.push(node); stack.length = 0; stack.push({ h:1, node }); return; }
+        while (stack.length && (stack[stack.length - 1].b !== undefined || stack[stack.length - 1].h >= level)) stack.pop();
+        if (!stack.length) throw bad(i, '"' + tl.s + '" is a heading but there is no deck above it. Start with a line like "# My deck".');
+        stack[stack.length - 1].node.children.push(node); stack.push({ h:level, node });
+        return;
+      }
+      if (!raw.trim()){ if (cur) blanks++; return; }
+      const fl = raw.match(flowRe);
+      if (fl && !/^\s/.test(raw)){
+        if (!decks.length) throw bad(i, 'a Flow line must come after a deck heading.');
+        decks[decks.length - 1].flows.push([fl[1], fl[2]]); cur = null; blanks = 0; return;
+      }
+      const b = raw.match(/^(\s*)[-*]\s+(.*?)\s*$/);
+      if (b){
+        if (!stack.length) throw bad(i, 'this box is not inside a deck. Start with a line like "# My deck".');
+        const indent = b[1].length;
+        while (stack.length > 1 && stack[stack.length - 1].b !== undefined && stack[stack.length - 1].b >= indent) stack.pop();
+        const node = parseBullet(b[2]); node._indent = indent;
+        stack[stack.length - 1].node.children.push(node); stack.push({ b:indent, node });
+        cur = node; blanks = 0; return;
+      }
+      const ind = raw.match(/^ */)[0].length;
+      if (cur && (ind > cur._indent || blanks === 0)){
+        const line = unesc(raw.replace(new RegExp('^ {0,' + (cur._indent + 2) + '}'), ''));
+        cur.text += (cur.text ? '\n'.repeat(blanks + 1) : '') + line.replace(/\s+$/, '');
+        blanks = 0; return;
+      }
+      if (!stack.length) return;
+      const top = stack[stack.length - 1];
+      if (top.b !== undefined || top.node.children.length) throw bad(i, 'I did not understand this line. Boxes look like "- Data: Title" with their text indented underneath.');
+      top.node.text += (top.node.text ? '\n' : '') + raw.trim(); cur = null; blanks = 0;
+    });
+    if (!decks.length) throw new Error('No deck found. Start with a line like "# My deck".');
+    return decks;
+  }
+
+  // ----- structure helpers (membership is explicit: item.parent = frame id) -----
+  const CW = 220, GAP = 14, FHEAD = 38, TILE_W = 290, TILE_H = 64;
+  // A box that holds others still shows its own text: a strip under the header, th pixels tall, with the children below it.
+  const thOf = f => { const t = (f.text || '').trim(); if (!t) return 0; const w = Math.max(120, (f.w || 260) - 24); return Math.min(260, 12 + 16 * t.split('\n').reduce((n, p) => n + Math.max(1, Math.ceil(p.length * 6.9 / w)), 0)); };
+  const hdOf = f => FHEAD + (f.th || 0);
+  function cardH(c){ const t = c.text || ''; const lines = Math.ceil(t.length / 30) + (t.split('\n').length - 1); const hd = canAdd(c) ? 30 : 0; return Math.max(88 + hd, Math.min(400, 68 + hd + 16 * lines)); }
+  const mapOf = d => new Map(d.items.map(i => [i.id, i]));
+  function hiddenSet(d){
+    const m = mapOf(d), hid = new Set();
+    d.items.forEach(it => { let p = it.parent, n = 0; while (p && n++ < 50){ const f = m.get(p); if (!f) break; if (f.collapsed){ hid.add(it.id); break; } p = f.parent; } });
+    return hid;
+  }
+  function proxyOf(m, it){ let res = it, p = it.parent, n = 0; while (p && n++ < 50){ const f = m.get(p); if (!f) break; if (f.collapsed) res = f; p = f.parent; } return res; }
+  // A collapsed box is a tile; it grows taller (up to 5 lines) so its summary can wrap instead of being cut off.
+  const tileH = it => TILE_H;
+  const vr = it => it.collapsed ? { x:it.x, y:it.y, w:it.kind === 'frame' ? Math.min(TILE_W, it.w) : it.w, h:TILE_H } : { x:it.x, y:it.y, w:it.w, h:it.h };
+  function descendants(d, f){
+    const out = [], stack = [f.id];
+    while (stack.length){ const id = stack.pop(); d.items.forEach(i => { if (i.parent === id){ out.push(i); if (i.kind === 'frame') stack.push(i.id); } }); }
+    return out;
+  }
+  // A box is a "frame" exactly when something is inside it; otherwise it is a plain card.
+  function syncKinds(d){
+    const has = new Set(); d.items.forEach(i => { if (i.parent) has.add(i.parent); });
+    d.items.forEach(it => {
+      if (has.has(it.id)){ it.kind = 'frame'; }
+      else if (it.kind === 'frame'){ it.kind = 'card'; delete it.collapsed; it.w = CW; it.h = cardH(it); }
+      else it.kind = 'card';
+    });
+  }
+  // Membership only changes when the user does it: dragging a box in or out (adopt = the dragged box) or a menu action.
+  // Expanding, collapsing, resizing and reloading never move a box into or out of another.
+  // A dragged box joins the smallest expanded frame that contains its centre; a frame it leaves shrinks to fit what is left.
+  function settle(d, adopt){
+    syncKinds(d);
+    const hid = hiddenSet(d), frames = d.items.filter(i => i.kind === 'frame' && !i.collapsed && !hid.has(i.id)), left = new Set();
+    (adopt || []).forEach(it => {
+      if (hid.has(it.id)) return;
+      const r = vr(it), c = { x:r.x + r.w / 2, y:r.y + r.h / 2 };
+      const below = it.kind === 'frame' ? new Set(descendants(d, it).map(x => x.id)) : null;
+      let best = null;
+      frames.forEach(f => {
+        if (f === it) return;
+        if (it.kind === 'frame' && (f.w * f.h <= vr(it).w * vr(it).h || below.has(f.id))) return;
+        if (c.x >= f.x && c.x <= f.x + f.w && c.y >= f.y && c.y <= f.y + f.h && (!best || f.w * f.h < best.w * best.h)) best = f;
+      });
+      const np = best ? best.id : null;
+      if ((it.parent || null) !== np){ if (it.parent) left.add(it.parent); if (np) it.parent = np; else delete it.parent; }
+    });
+    syncKinds(d);
+    left.forEach(id => fitChain(d, id));
+    growFrames(d);
+  }
+  // Shrink a box to just hold the boxes inside it (and its parents likewise). Never changes who is inside what.
+  function fitFrame(d, f){
+    if (f.collapsed) return;
+    const kids = d.items.filter(c => c.parent === f.id); if (!kids.length) return;
+    let r = 0, b = 0; kids.forEach(c => { const v = vr(c); r = Math.max(r, v.x + v.w); b = Math.max(b, v.y + v.h); });
+    f.w = Math.max(200, r + 20 - f.x); f.h = Math.max(hdOf(f) + 100, b + GAP + 30 - f.y);
+  }
+  // Run fn (which may make a box grow because a box inside it moved or got bigger), then slide whatever sits below a grown top-level box down, so it never lands on top of its neighbour.
+  function growTracked(d, fn){
+    const tops = d.items.filter(i => !i.parent).map(i => [i, vr(i).y + vr(i).h]);
+    fn();
+    tops.forEach(([t, ob]) => { if (!d.items.includes(t) || t.parent) return; const nb = vr(t).y + vr(t).h; if (nb > ob + 0.5) makeRoom(d, t, ob); else if (nb < ob - 0.5) closeGap(d, t, ob); });
+  }
+  function fitChain(d, id){ const m = mapOf(d); let f = m.get(id), n = 0; while (f && n++ < 50){ fitFrame(d, f); f = f.parent && m.get(f.parent); } }
+  // A box never hangs out of its parent: grow the parent (innermost first) to contain everything inside it.
+  function growFrames(d){
+    const hid = hiddenSet(d), m = mapOf(d);
+    const depth = it => { let n = 0, q = it; while (q.parent && m.get(q.parent) && n < 50){ q = m.get(q.parent); n++; } return n; };
+    d.items.filter(i => i.kind === 'frame' && !i.collapsed && !hid.has(i.id)).sort((p, q) => depth(q) - depth(p)).forEach(f => {
+      d.items.forEach(c => { if (c.parent === f.id){ const r = vr(c); f.w = Math.max(f.w, r.x + r.w + GAP - f.x); f.h = Math.max(f.h, r.y + r.h + GAP + 30 - f.y); } });
+    });
+  }
+  // Deleting a box deletes everything inside it too. The box it was in shrinks to fit what is left (and so do the boxes around that one),
+  // and a box left with nothing inside goes back to being a plain box.
+  function deleteItem(d, it){
+    const pid = it.parent, m0 = mapOf(d); let top = it; while (top.parent && m0.get(top.parent)) top = m0.get(top.parent);
+    const oldBottom = vr(top).y + vr(top).h;
+    const gone = new Set([it.id, ...descendants(d, it).map(x => x.id)]);
+    d.items = d.items.filter(x => !gone.has(x.id));
+    d.links = d.links.filter(l => !gone.has(l.a) && !gone.has(l.b));
+    syncKinds(d);
+    if (pid){ fitChain(d, pid); if (top !== it) closeGap(d, top, oldBottom); }
+  }
+  function structOf(d){
+    const rd = (a, b) => Math.abs(a.y - b.y) > 30 ? a.y - b.y : a.x - b.x;
+    const rf = (a, b) => Math.abs(a.y - b.y) > 80 ? a.y - b.y : a.x - b.x;
+    const build = fid => {
+      const kids = d.items.filter(i => (i.parent || null) === fid);
+      return { cards:kids.filter(k => k.kind === 'card').sort(rd),
+               subs:kids.filter(k => k.kind === 'frame').sort(rf).map(f => Object.assign(build(f.id), { frame:f })) };
+    };
+    return Object.assign(build(null), { frame:null });
+  }
+  function shiftStruct(s, dx, dy){ if (s.frame){ s.frame.x += dx; s.frame.y += dy; } s.cards.forEach(c => { c.x += dx; c.y += dy; }); s.subs.forEach(u => shiftStruct(u, dx, dy)); }
+  function lay(s){
+    if (s.frame) s.frame.th = thOf(s.frame);
+    const head = s.frame ? hdOf(s.frame) : 0, cols = s.cards.length >= 4 ? 2 : 1;
+    const blockW = s.cards.length ? cols * CW + (cols - 1) * GAP : 0;
+    let y = head + GAP, rowMax = 0;
+    s.cards.forEach((c, i) => {
+      const col = i % cols; c.w = CW; c.h = cardH(c); c.x = GAP + col * (CW + GAP); c.y = y; rowMax = Math.max(rowMax, c.collapsed ? TILE_H : c.h);
+      if (col === cols - 1 || i === s.cards.length - 1){ y += rowMax + GAP; rowMax = 0; }
+    });
+    const cardsBottom = s.cards.length ? y : head + GAP;
+    let sx = GAP + (blockW ? blockW + GAP : 0), subsBottom = head + GAP, maxRight = GAP + blockW;
+    s.subs.forEach(u => { const sz = lay(u); shiftStruct(u, sx, head + GAP); sx += sz.w + GAP; subsBottom = Math.max(subsBottom, head + GAP + sz.h + GAP); maxRight = Math.max(maxRight, sx - GAP); });
+    const w = Math.max(maxRight + GAP, s.frame ? 200 : 0), h = Math.max(cardsBottom, subsBottom, head + 90) + (s.frame ? 30 : 0);
+    if (s.frame){ Object.assign(s.frame, { x:0, y:0, w, h }); return s.frame.collapsed ? { w:Math.min(TILE_W, w), h:tileH(s.frame) } : { w, h }; }
+    return { w, h };
+  }
+  function layoutStruct(d, root){
+    let x = 0, y = 0, rowH = 0; const maxX = 1500;
+    const put = s => { const sz = lay(s); if (x > 0 && x + sz.w > maxX){ x = 0; y += rowH + 40; rowH = 0; } shiftStruct(s, x, y); x += sz.w + 34; rowH = Math.max(rowH, sz.h); };
+    if (root.cards.length) put({ frame:null, cards:root.cards, subs:[] });
+    root.subs.forEach(put);
+  }
+
+  // ----- parsed deck -> canvas deck -----
+  function deckFromParsed(p){
+    const d = { name:p.name, desc:p.text || '', items:[], links:[] }, meta = [];
+    { const fm = d.desc.match(/^Folder:[ \t]*(.*?)[ \t]*(?:\n|$)/i); if (fm){ if (fm[1]) d.folder = fm[1]; d.desc = d.desc.slice(fm[0].length); } }
+    const walk = (node, parent, pname) => {
+      (node.children || []).forEach(ch => {
+        const kids = (ch.children || []).length;
+        const it = { id:nid(), kind:kids ? 'frame' : 'card', name:ch.name, label:ch.label || '', text:ch.text || '' };
+        if (parent) it.parent = parent; if (ch.step) it.step = ch.step; if (ch.collapsed) it.collapsed = true; if (ch.box) Object.assign(it, ch.box);
+        d.items.push(it); meta.push({ it, fname:pname });
+        walk(ch, it.id, ch.name);
+      });
+    };
+    walk(p, null, null);
+    d.items.forEach(i => { if (i.kind === 'frame') i.th = thOf(i); });
+    const complete = d.items.every(i => ['x','y','w','h'].every(k => typeof i[k] === 'number'));
+    if (!complete) layoutStruct(d, structOf(d));
+    (p.flows || []).forEach(pair => {
+      const A = resolveRef(meta, pair[0]), B = resolveRef(meta, pair[1]);
+      if (A && B && A !== B && !d.links.some(l => l.a === A.id && l.b === B.id)) d.links.push({ a:A.id, b:B.id });
+    });
+    return d;
+  }
+  function resolveRef(meta, label){
+    const l = label.trim().toLowerCase();
+    let m = meta.find(x => x.it.name.toLowerCase() === l); if (m) return m.it;
+    const i = label.indexOf(' / ');
+    if (i > 0){
+      const fr = label.slice(0, i).trim().toLowerCase(), t = label.slice(i + 3).trim().toLowerCase();
+      m = meta.find(x => (x.fname || '').toLowerCase() === fr && x.it.name.toLowerCase() === t); if (m) return m.it;
+    }
+    return null;
+  }
+  function migrateDeck(o){
+    o.desc = o.desc || ''; o.links = o.links || [];
+    o.items.forEach(i => {
+      if (!i.id) i.id = nid();
+      if (i.label === undefined) i.label = (i.kind !== 'frame' && i.type) ? (i.type === 'edge' ? 'Edge case' : cap(i.type)) : '';
+      if (!i.text) i.text = i.desc || '';
+      delete i.type; delete i.desc;
+    });
+    return o;
+  }
+  function normalizeDeck(o){
+    if (Array.isArray(o.items)){ migrateDeck(o); settle(o); return o; }
+    return deckFromParsed(o);
+  }
+
+  // ----- canvas deck -> text -----
+  function treeOf(d){
+    const rf = (a, b) => Math.abs(a.y - b.y) > 60 ? a.y - b.y : a.x - b.x;
+    const build = pid => d.items.filter(i => (i.parent || null) === pid).sort(rf).map(it => ({ it, children:build(it.id) }));
+    return { it:null, name:d.name, text:d.desc, children:build(null) };
+  }
+  function layoutSuffix(it){ return typeof it.x === 'number' ? ' @(' + Math.round(it.x) + ',' + Math.round(it.y) + ') ' + Math.round(it.w) + 'x' + Math.round(it.h) : ''; }
+  function headOf(it){
+    const l = lab(it), head = (l + (it.step ? ' (step ' + it.step + ')' : '')).trim();
+    return head ? head + ': ' + it.name : (/:(\s|$)/.test(it.name) ? ': ' + it.name : it.name);
+  }
+  const countAll = n => n.children.reduce((k, c) => k + 1 + countAll(c), 0);
+  function nodeText(n, depth, o){
+    const kids = o.dropEmpty ? n.children.filter(c => !(lab(c.it) === 'Detail' && !c.it.text && !c.children.length)) : n.children;
+    const it = n.it, ind = '  '.repeat(depth), st = o.state(n), isF = kids.length > 0;
+    if (isF && st === 'collapse') return ind + '- ' + headOf(it) + ' — ' + plural(countAll(n), 'box') + ' inside [collapsed]';
+    let tail = '';
+    if (o.layout){ if (it.collapsed) tail += ' (collapsed)'; tail += layoutSuffix(it); }
+    let s = ind + '- ' + headOf(it) + tail;
+    if (st === 'full' && it.text) s += '\n' + it.text.split('\n').map(l => l ? ind + '  ' + l.replace(/^(\s*)- /, '$1\\- ') : '').join('\n');
+    kids.forEach(c => { s += (c.children.length ? '\n\n' : '\n') + nodeText(c, depth + 1, o); });
+    return s;
+  }
+  function toText(d, o){
+    o = Object.assign({ layout:false, state:() => 'full' }, o || {});
+    const T = treeOf(d);
+    let s = '# ' + d.name; if (d.folder && !o.noFolder) s += '\nFolder: ' + d.folder; if (d.desc) s += '\n' + d.desc;
+    T.children.forEach(c => { s += (c.children.length ? '\n\n' : '\n') + nodeText(c, 0, o); });
+    const order = [], pname = new Map();
+    (function walk(n, pn){ n.children.forEach(c => { order.push(c.it); pname.set(c.it, pn); walk(c, c.it.name); }); })(T, '');
+    const titleCount = {}; order.forEach(c => { const k = c.name.toLowerCase(); titleCount[k] = (titleCount[k] || 0) + 1; });
+    const label = c => (titleCount[c.name.toLowerCase()] > 1 && pname.get(c)) ? pname.get(c) + ' / ' + c.name : c.name;
+    const byIdm = new Map(order.map(c => [c.id, c]));
+    const flows = d.links.map(l => [byIdm.get(l.a), byIdm.get(l.b)]).filter(p => p[0] && p[1])
+      .sort((p, q) => order.indexOf(p[0]) - order.indexOf(q[0]) || order.indexOf(p[1]) - order.indexOf(q[1]));
+    if (flows.length) s += '\n\n' + flows.map(p => 'Flow: ' + label(p[0]) + ' → ' + label(p[1])).join('\n');
+    return s;
+  }
+  // Plain-English summary of how each box's children are arranged on the canvas (columns / rows).
+  function layoutNotes(d){
+    const T = treeOf(d), out = [];
+    const groups = (rs, a, b) => {   // cluster by overlap along one axis
+      const sorted = rs.slice().sort((p, q) => p.r[a] - q.r[a]), g = []; let end = -1e9;
+      sorted.forEach(r => { if (g.length && r.r[a] < end - 8){ g[g.length - 1].push(r); end = Math.max(end, r.r[a] + r.r[b]); } else { g.push([r]); end = r.r[a] + r.r[b]; } });
+      return g;
+    };
+    const walk = (n, name) => {
+      const kids = n.children.filter(c => lab(c.it) !== 'Detail');
+      if (kids.length >= 2){
+        const rs = kids.map(c => ({ n:c.it.name, r:vr(c.it) }));
+        const cols = groups(rs, 'x', 'w');
+        if (cols.length > 1){
+          out.push('In ' + name + ': ' + cols.length + ' columns, left to right: ' + cols.map(c => { const l = c.sort((p, q) => p.r.y - q.r.y).map(r => r.n); return l.length > 1 ? '[' + l.join(', ') + ']' : l[0]; }).join(' | '));
+        } else {
+          const rows = groups(rs, 'y', 'h');
+          if (rows.length > 1) out.push('In ' + name + ': stacked top to bottom: ' + rows.map(r => r.map(x => x.n).join(', ')).join(' | '));
+        }
+      }
+      n.children.forEach(c => { if (c.children.length) walk(c, '"' + c.it.name + '"'); });
+    };
+    walk(T, 'the top level');
+    return out.join('\n');
+  }
+
+  // ================= persistence + history =================
+  function save(){
+    bridgeOut();
+    try { localStorage.setItem(KEY, JSON.stringify(state.lib)); const n = $('savedNote'); if (n) n.textContent = 'Saved in this browser only · ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){}
+  }
+  function loadLib(){
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(s) && s.length && s.every(d => Array.isArray(d.items))){ s.forEach(d => { migrateDeck(d); settle(d); }); return s; } } catch(e){}
+    return seedDecks();
+  }
+  const fromB64 = s => decodeURIComponent(escape(atob(s)));
+  const toB64 = s => btoa(unescape(encodeURIComponent(s)));
+  function seedDecks(){
+    const el = $('seed'); let t = el.textContent;
+    if (el.dataset.b64) t = fromB64(t.trim());
+    return t.trim() ? parseText(t).map(deckFromParsed) : [];
+  }
+  const snap = () => JSON.stringify(deck());
+  function pushHist(before){ state.hist.push(before); if (state.hist.length > 100) state.hist.shift(); state.fut = []; syncUndo(); }
+  function syncUndo(){ $('undo').disabled = !state.hist.length; $('redo').disabled = !state.fut.length; }
+  function restore(json){ state.lib[state.ix] = JSON.parse(json); if (state.sel && !exists(state.sel)) state.sel = null; save(); renderAll(); }
+  function undo(){ if (!state.hist.length) return; state.fut.push(snap()); restore(state.hist.pop()); syncUndo(); }
+  function redo(){ if (!state.fut.length) return; state.hist.push(snap()); restore(state.fut.pop()); syncUndo(); }
+  function commit(fn){ const b = snap(); fn(); pushHist(b); save(); renderAll(); }
+  function exists(s){
+    const d = deck(); if (!s) return false;
+    if (s.kind === 'link') return d.links.some(l => l.a + '>' + l.b === s.key);
+    return d.items.some(i => i.id === s.id);
+  }
+  const byId = id => deck().items.find(i => i.id === id);
+
+  // ================= canvas =================
+  const cv = $('cv'), world = $('world'), linksSvg = $('links');
+  const els = new Map();
+  function applyView(){
+    const v = state.v;
+    world.style.transform = 'translate(' + v.x + 'px,' + v.y + 'px) scale(' + v.k + ')';
+    world.style.setProperty('--ik', 1 / v.k);
+    $('zl').textContent = Math.round(v.k * 100) + '%';
+    if (typeof positionBar === 'function') positionBar();
+  }
+  const isSel = it => state.sel && state.sel.kind !== 'link' && state.sel.id === it.id;
+  function handles(it){
+    const LK = '<i class="h link" data-h="link" title="Drag to another box to draw an arrow">→</i>';
+    if (it.kind === 'frame') return it.collapsed ? LK : '<i class="h nw" data-h="nw"></i><i class="h ne" data-h="ne"></i><i class="h sw" data-h="sw"></i><i class="h se" data-h="se"></i>' + LK;
+    if (it.collapsed) return '<i class="h link" data-h="link" title="Drag to another card to draw an arrow">→</i>';
+    return '<i class="h nw" data-h="nw"></i><i class="h ne" data-h="ne"></i><i class="h sw" data-h="sw"></i><i class="h se" data-h="se"></i><i class="h link" data-h="link" title="Drag to another card to draw an arrow">→</i>';
+  }
+  // One line saying what a box does: its own text, else its answered Detail boxes (Insight last).
+  function summaryOf(it, d){
+    const t = (it.text || '').split('\n').find(l => l.trim()); if (t) return t.trim();
+    const ds = d.items.filter(x => x.parent === it.id && lab(x) === 'Detail' && (x.text || '').trim());
+    ds.sort((a, b) => (a.name === 'Insight') - (b.name === 'Insight'));
+    return ds.slice(0, 3).map(x => x.name.replace(/ \(.*/, '') + ': ' + x.text.trim().split('\n')[0]).join(' · ');
+  }
+  // Operations a program can do more than once (one box per column, say) stay in the menu after one is added.
+  const REPEATS = new Set(KIT.repeats);
+  const isRep = p => REPEATS.has(pName(p).toLowerCase());
+  const haveOf = (d, it) => new Set(d.items.filter(x => x.parent === it.id).map(x => x.name.toLowerCase()));
+  const leftOf = (d, it) => { const have = haveOf(d, it); return promptsFor(it).filter(p => isRep(p) || !have.has(pName(p).toLowerCase())); };
+  const pc = it => it.ph ? ' ph' : '';
+  const dn = it => it.ph ? 'Name this' : it.name;   // a placeholder shows short text; its stored title stays unique so arrows still match
+  const canAdd = it => lab(it) !== 'Detail';   // the bottom + adds a new box inside; the questions list lives in the bar's More ▾
+  const BOXPLUS = '<svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true"><rect x="1" y="1" width="16" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 4v6M6 7h6" stroke="currentColor" stroke-width="1.6"/></svg>';
+  const foot = (d, it) => '<div class="ffoot">' + (leftOf(d, it).length ? '<button class="fdet star" data-det="1" title="Prompts">*</button>' : '') + '<button class="fdet" data-add="1" title="Add a box inside">' + BOXPLUS + '</button></div>';
+  function itemHTML(it, d){
+    const h = isSel(it) ? handles(it) : '', l = showLab(it);
+    if (it.kind === 'frame'){
+      const n = descendants(d, it).length, meta = [it.step ? 'step ' + it.step : '', l ? esc(l) : ''].filter(Boolean).join(' · ');
+      if (it.collapsed){
+        return '<div class="ctile"><button class="tgl" data-toggle="1" title="Expand">▸</button><div class="cn"><div class="tg">' + (meta || '&nbsp;') + '</div><b class="ttl' + pc(it) + '">' + esc(dn(it)) + '</b></div></div>' + h;
+      }
+      const fc = colorOf(it), meta2 = it.step ? 'step ' + it.step : '';
+      return '<div class="ft" data-ft="1"' + (fc ? ' style="background:' + fc + '"' : '') + '><button class="tgl" data-toggle="1" title="Collapse">▾</button><b class="ttl' + pc(it) + '">' + esc(dn(it)) + '</b>' + (meta2 ? '<span>' + meta2 + '</span>' : '') + '</div>' + (it.th ? '<div class="ftxt" style="height:' + (it.th - 4) + 'px">' + esc(it.text || '') + '</div>' : '') + (canAdd(it) ? foot(d, it) : '') + h;
+    }
+    if (it.collapsed){
+      const meta = [it.step ? 'step ' + it.step : '', l ? esc(l) : ''].filter(Boolean).join(' · ');
+      return '<div class="ctile"><button class="tgl" data-toggle="1" title="Expand">▸</button><div class="cn"><div class="tg">' + (meta || '&nbsp;') + '</div><b class="ttl' + pc(it) + '">' + esc(dn(it)) + '</b></div></div>' + h;
+    }
+    const colbl = lab(it) !== 'Detail' ? '<button class="tgl ctg" data-toggle="1" title="Collapse">▾</button>' : '';
+    return '<div class="in' + (colbl ? ' ci' : '') + '">' + ((it.step || l) ? '<div class="tg">' + (it.step ? '<span class="stp">' + esc(it.step) + '</span>' : '') + esc(l) + '</div>' : (colbl ? '<div class="tg">&nbsp;</div>' : '')) + '<div class="nm ttl' + pc(it) + '">' + esc(dn(it)) + '</div>' +
+      '<div class="bd' + (it.text ? '' : ' empty') + '">' + esc(it.text || '') + '</div></div>' + (canAdd(it) ? foot(d, it) : '') + colbl + h;
+  }
+  function place(it, el){
+    const r = vr(it);
+    el.style.left = r.x + 'px'; el.style.top = r.y + 'px'; el.style.width = r.w + 'px'; el.style.height = r.h + 'px';
+  }
+  function renderCanvas(){
+    { const ae = document.activeElement; if (ae && ae.closest && ae.closest('#world') && /^(TEXTAREA|INPUT)$/.test(ae.tagName)) ae.blur(); }   // finish any open editor first; redrawing under it re-enters this function
+    const d = deck(), hid = hiddenSet(d), seen = new Set();
+    if (state.sel && state.sel.kind !== 'link' && hid.has(state.sel.id)) state.sel = null;
+    d.items.forEach(it => {
+      if (hid.has(it.id)) return;
+      seen.add(it.id);
+      let el = els.get(it.id);
+      if (!el){ el = document.createElement('div'); el.dataset.id = it.id; world.appendChild(el); els.set(it.id, el); }
+      el.className = (it.kind === 'frame' ? 'frame' + (it.collapsed ? ' collapsed' : '') : 'card') + (isSel(it) ? ' sel' : '') + (it.kind === 'card' && !it.collapsed && canAdd(it) ? ' hd' : '');
+      place(it, el);
+      el.style.background = (it.kind === 'card' || it.collapsed) ? colorOf(it) : '';
+      el.innerHTML = itemHTML(it, d);
+    });
+    els.forEach((el, id) => { if (!seen.has(id)){ const ae = document.activeElement; if (ae && ae !== document.body && el.contains(ae)) ae.blur(); if (el.parentNode) el.remove(); els.delete(id); } });
+    renderLinks();
+    $('empty').style.display = d.items.length ? 'none' : 'flex';
+    positionBar();
+  }
+  function edge(r, toward){
+    const c = { x:r.x + r.w / 2, y:r.y + r.h / 2 }, dx = toward.x - c.x, dy = toward.y - c.y;
+    if (!dx && !dy) return c;
+    const t = Math.min((r.w / 2) / (Math.abs(dx) || 1e-9), (r.h / 2) / (Math.abs(dy) || 1e-9));
+    return { x:c.x + dx * t, y:c.y + dy * t };
+  }
+  function renderLinks(){
+    const d = deck(), m = mapOf(d);
+    let h = '<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3b4148"/></marker><marker id="ars" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2f5fb3"/></marker></defs>';
+    d.links.forEach(l => {
+      const a0 = m.get(l.a), b0 = m.get(l.b); if (!a0 || !b0) return;
+      const a = proxyOf(m, a0), b = proxyOf(m, b0); if (a === b) return;
+      const ra = vr(a), rb = vr(b), ca = { x:ra.x + ra.w / 2, y:ra.y + ra.h / 2 }, cb = { x:rb.x + rb.w / 2, y:rb.y + rb.h / 2 };
+      const p = edge(ra, cb), q = edge(rb, ca), key = l.a + '>' + l.b;
+      const sel = state.sel && state.sel.kind === 'link' && state.sel.key === key, dash = (a !== a0 || b !== b0) ? ' stroke-dasharray="7 5"' : '';
+      h += '<line x1="' + p.x + '" y1="' + p.y + '" x2="' + q.x + '" y2="' + q.y + '" stroke="' + (sel ? '#2f5fb3' : '#3b4148') + '" stroke-width="' + (sel ? 3.5 : 2.2) + '"' + dash + ' marker-end="url(#' + (sel ? 'ars' : 'ar') + ')"/>' +
+           '<line class="lk" data-lk="' + key + '" x1="' + p.x + '" y1="' + p.y + '" x2="' + q.x + '" y2="' + q.y + '" stroke="transparent" stroke-width="16"/>';
+    });
+    h += '<line id="tmp" stroke="#2f5fb3" stroke-width="2.5" stroke-dasharray="6 4" style="display:none"/>';
+    linksSvg.innerHTML = h;
+  }
+  const rectOf = () => cv.getBoundingClientRect();
+  function toWorld(e){ const r = rectOf(), v = state.v; return { x:(e.clientX - r.left - v.x) / v.k, y:(e.clientY - r.top - v.y) / v.k }; }
+  const snapv = (n, e) => (e && e.altKey) ? n : Math.round(n / 10) * 10;
+
+  function fit(){
+    const d = deck(), r = rectOf(), hid = hiddenSet(d), vis = d.items.filter(i => !hid.has(i.id)).map(vr);
+    if (!vis.length){ state.v = { x:r.width / 2 - 200, y:80, k:1 }; applyView(); return; }
+    const x0 = Math.min(...vis.map(i => i.x)), y0 = Math.min(...vis.map(i => i.y));
+    const x1 = Math.max(...vis.map(i => i.x + i.w)), y1 = Math.max(...vis.map(i => i.y + i.h));
+    const k = Math.max(0.15, Math.min(1.1, (r.width - 90) / (x1 - x0), (r.height - 90) / (y1 - y0)));
+    state.v = { k, x:(r.width - (x1 - x0) * k) / 2 - x0 * k, y:(r.height - (y1 - y0) * k) / 2 - y0 * k };
+    applyView();
+  }
+  function zoomAt(f, sx, sy){
+    const v = state.v, k2 = Math.max(0.15, Math.min(2.5, v.k * f)), r = k2 / v.k;
+    state.v = { k:k2, x:sx - (sx - v.x) * r, y:sy - (sy - v.y) * r }; applyView();
+  }
+  cv.addEventListener('wheel', e => { e.preventDefault(); const r = rectOf(); zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - r.left, e.clientY - r.top); }, { passive:false });
+  $('zi').onclick = () => { const r = rectOf(); zoomAt(1.25, r.width / 2, r.height / 2); };
+  $('zo').onclick = () => { const r = rectOf(); zoomAt(0.8, r.width / 2, r.height / 2); };
+  $('fit').onclick = fit;
+
+  // ----- pointer interactions -----
+  let drag = null;
+  cv.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('#zoomctl, #addbar, #bar, #empty button')) return;
+    const t = e.target, hEl = t.closest('[data-h]'), lk = t.closest('[data-lk]'), itEl = t.closest('[data-id]');
+    if (t.isContentEditable || t.tagName === 'TEXTAREA') return;
+    if (t.closest('[data-toggle]') && itEl){ toggleFrame(itEl.dataset.id); return; }
+    if (t.closest('[data-det]') && itEl){ e.preventDefault(); openDetMenu(itEl.dataset.id, t.closest('[data-det]')); return; }
+    if (t.closest('[data-add]') && itEl){ e.preventDefault(); addIn(itEl.dataset.id, true); return; }
+    cv.setPointerCapture(e.pointerId);
+    const w = toWorld(e);
+    if (lk){ select({ kind:'link', key:lk.dataset.lk }); state.barOn = true; inspector(); drag = null; return; }
+    if (hEl && itEl){
+      const it = byId(itEl.dataset.id);
+      if (hEl.dataset.h === 'link'){ drag = { kind:'connect', from:it }; const tmp = $('tmp'); tmp.style.display = ''; return; }
+      drag = { kind:'resize', it, dir:hEl.dataset.h, before:snap(), o:{ x:it.x, y:it.y, w:it.w, h:it.h }, w0:w, moved:false }; return;
+    }
+    if (itEl && (itEl.classList.contains('card') || t.closest('.ft') || t.closest('.ftxt') || itEl.classList.contains('collapsed'))){
+      state.pressT = Date.now();
+      const it = byId(itEl.dataset.id), canRename = isSel(it) && !!t.closest('.ttl'), canBody = isSel(it) && (it.kind === 'card' ? !!t.closest('.bd') : !!t.closest('.ftxt'));
+      if (!isSel(it)) select({ kind:it.kind, id:it.id });
+      const group = [it];
+      if (it.kind === 'frame') descendants(deck(), it).forEach(c => group.push(c));
+      drag = { kind:'move', it, group, starts:group.map(g => ({ x:g.x, y:g.y })), before:snap(), w0:w, moved:false, rename:canRename, body:canBody };
+      cv.style.cursor = 'grabbing'; return;
+    }
+    drag = { kind:'pan', sx:e.clientX, sy:e.clientY, v0:{ ...state.v }, moved:false };
+    cv.classList.add('panning');
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!drag) return;
+    requestAnimationFrame(positionBar);
+    const w = toWorld(e);
+    if (drag.kind === 'pan'){
+      const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+      if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+      state.v = { ...drag.v0, x:drag.v0.x + dx, y:drag.v0.y + dy }; applyView(); return;
+    }
+    if (drag.kind === 'move'){
+      let dx = w.x - drag.w0.x, dy = w.y - drag.w0.y;
+      if (Math.abs(dx) + Math.abs(dy) < 3 && !drag.moved) return;
+      drag.moved = true; $('bar').hidden = true;
+      dx = snapv(drag.starts[0].x + dx, e) - drag.starts[0].x; dy = snapv(drag.starts[0].y + dy, e) - drag.starts[0].y;
+      drag.group.forEach((g, i) => { g.x = drag.starts[i].x + dx; g.y = drag.starts[i].y + dy; const el = els.get(g.id); if (el) place(g, el); });
+      renderLinks(); return;
+    }
+    if (drag.kind === 'resize'){
+      const it = drag.it, o = drag.o, minW = it.kind === 'frame' ? 160 : 120, minH = it.kind === 'frame' ? 100 : 60;
+      drag.moved = true; $('bar').hidden = true;
+      let x0 = o.x, y0 = o.y, x1 = o.x + o.w, y1 = o.y + o.h;
+      if (drag.dir.includes('w')) x0 = Math.min(snapv(w.x, e), x1 - minW); else x1 = Math.max(snapv(w.x, e), x0 + minW);
+      if (drag.dir.includes('n')) y0 = Math.min(snapv(w.y, e), y1 - minH); else y1 = Math.max(snapv(w.y, e), y0 + minH);
+      Object.assign(it, { x:x0, y:y0, w:x1 - x0, h:y1 - y0 }); place(it, els.get(it.id)); renderLinks(); return;
+    }
+    if (drag.kind === 'connect'){
+      const f = drag.from, p = edge(f, w), tmp = $('tmp');
+      tmp.setAttribute('x1', p.x); tmp.setAttribute('y1', p.y); tmp.setAttribute('x2', w.x); tmp.setAttribute('y2', w.y);
+    }
+  });
+  function endDrag(e){
+    if (!drag) return;
+    const dr = drag; drag = null;
+    cv.classList.remove('panning'); cv.style.cursor = '';
+    if (dr.kind === 'pan'){ if (!dr.moved) select(null); return; }
+    if (dr.kind === 'move' && !dr.moved){
+      state.barOn = true; inspector();   // the bar opens only on a deliberate click, never after a drag, a toggle or a menu move
+      const now = Date.now(), twice = !dr.it.collapsed && state.lastTap && state.lastTap.id === dr.it.id && now - state.lastTap.t < 450;
+      state.lastTap = { id:dr.it.id, t:now };
+      if (dr.body){ state.lastTap = null; startBody(dr.it.id); return; }
+      if (dr.rename || twice){ state.lastTap = null; startInline(dr.it.id); return; }
+    }
+    if (dr.kind === 'move' || dr.kind === 'resize'){
+      if (dr.moved){ state.barOn = false; growTracked(deck(), () => settle(deck(), dr.kind === 'move' ? [dr.it] : null)); if (snap() !== dr.before){ pushHist(dr.before); save(); } }
+      renderAll(); return;
+    }
+    if (dr.kind === 'connect'){
+      const t = document.elementFromPoint(e.clientX, e.clientY), el = t && t.closest('[data-id]');
+      const to = el && byId(el.dataset.id);
+      $('tmp') && ($('tmp').style.display = 'none');
+      if (to && to !== dr.from && !deck().links.some(l => l.a === dr.from.id && l.b === to.id)){
+        commit(() => deck().links.push({ a:dr.from.id, b:to.id }));
+        select({ kind:'link', key:dr.from.id + '>' + to.id });
+      }
+    }
+  }
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+  cv.addEventListener('dblclick', e => {
+    const itEl = e.target.closest('[data-id]');
+    if (itEl){
+      const it0 = byId(itEl.dataset.id);
+      if (it0 && it0.collapsed){ toggleFrame(it0.id); return; }
+      return;
+    }
+    if (Date.now() - (state.pressT || 0) < 600) return;   // a double-click on a box whose element was just redrawn
+    if (e.target.closest('#zoomctl, #addbar, #bar, #empty button, [data-add], [data-det]')) return;
+    const w = toWorld(e); addBox(w);
+  });
+
+  // A card grows to fit what is written in it (never shrinks): boxes below it in the same group slide down, parents stretch.
+  function fitCard(it, live){
+    if (!it || it.kind !== 'card') return;
+    const el = els.get(it.id), inn = el && el.querySelector('.in'), last = inn && inn.lastElementChild; if (!last) return;
+    const need = Math.min(400, Math.ceil(last.offsetTop + last.offsetHeight + 16 + (el.classList.contains('hd') ? 30 : 0))), dy = need - it.h;
+    if (dy <= 0) return;
+    const d = deck(), top = topOf(it), r0 = vr(top), oldBottom = r0.y + r0.h, ob = it.y + it.h;
+    it.h = need;
+    if (it.parent) d.items.forEach(o => {
+      if (o === it || o.parent !== it.parent) return;
+      const r = vr(o); if (r.y < ob - 1 || r.x >= it.x + it.w || r.x + r.w <= it.x) return;
+      o.y += dy; descendants(d, o).forEach(c => { c.y += dy; });
+    });
+    growFrames(d); makeRoom(d, top, oldBottom);
+    if (live){ d.items.forEach(o => { const e2 = els.get(o.id); if (e2) place(o, e2); }); renderLinks(); } else renderCanvas();
+  }
+  // When a container's own text changes height, slide its contents down (or up) and let the container follow.
+  function syncTh(f){
+    const n = thOf(f), dth = n - (f.th || 0); if (!dth) return false;
+    f.th = n;
+    if (f.kind === 'frame'){ const d = deck(), top = topOf(f), r0 = vr(top), ob = r0.y + r0.h; descendants(d, f).forEach(c => { c.y += dth; }); f.h += dth; growFrames(d); makeRoom(d, top, ob); }
+    return true;
+  }
+  const fitSel = () => { const s = state.sel; if (s && s.kind !== 'link') fitCard(byId(s.id)); };
+
+  // Write a box's text in place: a textarea opens inside the box and grows with what is typed.
+  function startBody(id){
+    const it = byId(id), el = els.get(id); if (!it || !el) return;
+    const box = el.querySelector(it.kind === 'card' ? '.bd' : '.ftxt'); if (!box || box.querySelector('textarea')) return;
+    const before = snap(), ta = document.createElement('textarea'); ta.value = it.text || ''; ta.rows = 1;
+    box.textContent = ''; box.classList.remove('empty'); box.appendChild(ta);
+    const grow = () => { if (it.kind !== 'card') return; ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
+    grow(); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    let done = false;
+    ta.addEventListener('input', () => { it.text = ta.value; grow(); if (it.kind === 'card') fitCard(it, true); else { syncTh(it); box.style.height = (it.th - 4) + 'px'; const d = deck(); d.items.forEach(o => { const e2 = els.get(o.id); if (e2) place(o, e2); }); renderLinks(); } save(); });
+    ta.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Escape'){ e.preventDefault(); ta.blur(); } });
+    ta.addEventListener('blur', () => { if (done) return; done = true; if (it.kind === 'frame') syncTh(it); if (snap() !== before) pushHist(before); save(); renderAll(); });
+  }
+  // Rename a box in place: edit its title where it sits on the canvas.
+  function startInline(id){
+    const el = els.get(id), t = el && el.querySelector('.ttl'); if (!t || t.isContentEditable) return;
+    t.contentEditable = 'true'; t.spellcheck = false; t.focus();
+    const rg = document.createRange(); rg.selectNodeContents(t); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg);
+    let done = false;
+    const finish = (ok, next) => {
+      if (done) return; done = true; t.contentEditable = 'false';
+      const v = t.textContent.replace(/\s+/g, ' ').trim(), it = byId(id);
+      if (ok && v && it && v !== it.name && !(it.ph && v === 'Name this')){ commit(() => { it.name = v; delete it.ph; }); fitCard(it); } else renderCanvas();
+      inspector();
+      if (next){ const q = byId(id); if (q && q.kind === 'card') startBody(id); }
+    };
+    t.addEventListener('keydown', e => {
+      e.stopPropagation();
+      if (e.key === 'Enter'){ e.preventDefault(); finish(true, true); } else if (e.key === 'Escape'){ e.preventDefault(); finish(false); }
+    });
+    t.addEventListener('blur', () => finish(true));
+  }
+
+  // ----- nesting helpers -----
+  function nestHTML(it, d){
+    const bad = new Set([it.id, ...(it.kind === 'frame' ? descendants(d, it).map(x => x.id) : [])]);
+    const depth = f => { let n = 0, q = f; while (q.parent && n < 20){ q = byId(q.parent); n++; } return n; };
+    const opts = d.items.filter(x => !bad.has(x.id) && x.id !== it.parent).map(f => '<option value="' + f.id + '"' + (it.parent === f.id ? ' selected' : '') + '>' + '— '.repeat(depth(f)) + esc(f.name) + '</option>').join('');
+    return '<div class="row"><button class="btn" id="addin" style="width:100%;text-align:left">Add a box inside</button></div>' +
+      '<div class="row" style="margin-top:6px"><button class="btn" id="wrap" style="width:100%;text-align:left">Put a box around this</button></div>' +
+      '<div class="row" style="margin-top:6px"><select id="f-par" aria-label="Move into" style="width:100%"><option value="" selected disabled>Move into…</option>' + (it.parent ? '<option value="__top">Top level</option>' : '') + opts + '</select></div>';
+  }
+  function bindNest(it){
+    $('f-par').onchange = e => moveInto(it, e.target.value === '__top' ? '' : e.target.value);
+    $('wrap').onclick = () => wrapInFrame(it);
+  }
+  function moveInto(it, fid){
+    const d = deck();
+    if (!fid && !it.parent) return;
+    commit(() => growTracked(d, () => {
+      const own = it.kind === 'frame' ? [it, ...descendants(d, it)] : [it], oldP = it.parent;
+      if (fid){
+        const f = byId(fid); let q = f; while (q){ delete q.collapsed; q = q.parent && byId(q.parent); }
+        const kids = d.items.filter(x => x.parent === f.id && x !== it && x.id !== undefined);
+        if (!kids.length) f.th = thOf(f);
+        const nx = f.x + 20, ny = kids.length ? Math.max(...kids.map(k => { const r = vr(k); return r.y + r.h; })) + 16 : f.y + hdOf(f) + 14;
+        const dx = nx - it.x, dy = ny - it.y;
+        own.forEach(g => { g.x += dx; g.y += dy; });
+        const r0 = vr(it);
+        f.w = Math.max(f.w, r0.x + r0.w + 20 - f.x); f.h = Math.max(f.h, r0.y + r0.h + 20 - f.y);
+        let a = f; while (a.parent && byId(a.parent)){ const P = byId(a.parent); P.w = Math.max(P.w, a.x + a.w + 20 - P.x); P.h = Math.max(P.h, a.y + a.h + 20 - P.y); a = P; }
+        it.parent = f.id;
+      } else {
+        let root = it; while (root.parent && byId(root.parent)) root = byId(root.parent);
+        const dx = root.x + root.w + 40 - it.x, dy = root.y - it.y;
+        own.forEach(g => { g.x += dx; g.y += dy; }); delete it.parent;
+      }
+      if (oldP && oldP !== it.parent) fitChain(d, oldP);
+      settle(d);
+    }));
+    inspector();
+  }
+  function wrapInFrame(it){
+    const d = deck(), r = vr(it), pad = 20, f = { id:nid(), kind:'frame', name:'New box', label:'', text:'', x:r.x - pad, y:r.y - FHEAD - pad, w:r.w + 2 * pad, h:r.h + FHEAD + 2 * pad };
+    commit(() => { if (it.parent) f.parent = it.parent; d.items.push(f); it.parent = f.id; settle(d); });
+    select({ kind:'frame', id:f.id }); focusTitle();
+  }
+  // After expanding, if the frame now lies on top of something else, re-pack everything (undoable).
+  function crowds(d, f){
+    const hid = hiddenSet(d), own = new Set(descendants(d, f).map(x => x.id)), m = mapOf(d), anc = new Set();
+    let q = f.parent; while (q){ anc.add(q); q = m.get(q) && m.get(q).parent; }
+    const a = vr(f);
+    return d.items.some(o => {
+      if (o === f || hid.has(o.id) || own.has(o.id) || anc.has(o.id)) return false;
+      const b = vr(o); return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+    });
+  }
+  const topOf = it => { let t = it; while (t.parent && byId(t.parent)) t = byId(t.parent); return t; };
+  // When a top-level box grows downward, slide whatever sat below it down by the same amount (like inserting space).
+  // Nothing else moves, so the rest of the layout stays exactly as the author arranged it.
+  function makeRoom(d, top, oldBottom){
+    const r = vr(top), grow = r.y + r.h - oldBottom;
+    if (grow <= 0 || !crowds(d, top)) return;
+    const hid = hiddenSet(d), own = new Set(descendants(d, top).map(x => x.id)); own.add(top.id);
+    // a box already poking up under the old bottom edge (a slight overlap) counts as below too
+    let pivot = oldBottom;
+    d.items.forEach(o => { if (o.parent || own.has(o.id) || hid.has(o.id)) return; const b = vr(o); if (o.y > top.y && o.y < pivot && r.x < b.x + b.w && b.x < r.x + r.w && r.y < b.y + b.h && b.y < r.y + r.h) pivot = o.y; });
+    const dy = pivot === oldBottom ? grow : Math.max(grow, r.y + r.h + GAP - pivot);
+    d.items.filter(o => !o.parent && !own.has(o.id) && o.y >= pivot - 1).forEach(o => {
+      o.y += dy; descendants(d, o).forEach(c => { c.y += dy; });
+    });
+  }
+  // The other way round: when a top-level box got shorter, slide whatever sat below it back up (as far as the shrink, never onto anything else).
+  function closeGap(d, top, oldBottom){
+    const r = vr(top), shrink = oldBottom - (r.y + r.h);
+    if (shrink <= 0) return;
+    const hid = hiddenSet(d), own = new Set(descendants(d, top).map(x => x.id)); own.add(top.id);
+    const others = d.items.filter(o => !o.parent && !own.has(o.id) && !hid.has(o.id));
+    const movers = others.filter(o => o.y >= oldBottom - 1), stay = others.filter(o => o.y < oldBottom - 1);
+    if (!movers.length) return;
+    let dy = shrink;
+    movers.forEach(o => {
+      const b = vr(o); let floor = -Infinity;
+      if (r.x < b.x + b.w && b.x < r.x + r.w) floor = r.y + r.h + GAP;
+      stay.forEach(q => { const sb = vr(q); if (b.x < sb.x + sb.w && sb.x < b.x + b.w) floor = Math.max(floor, sb.y + sb.h + GAP); });
+      dy = Math.min(dy, o.y - floor);
+    });
+    if (dy <= 0) return;
+    movers.forEach(o => { o.y -= dy; descendants(d, o).forEach(c => { c.y -= dy; }); });
+  }
+  // Expanding makes boxes bigger. Instead of re-packing the deck, push neighbours out of the way: a box that sat to the right of a grown box
+  // moves right, a box that sat below it moves down. Left-to-right and top-to-bottom order, and the gaps between boxes (up to 30 px), are kept.
+  // `old` is the rectangle of every box before the change (see rectsNow). Boxes inside the same outer box are pushed apart among themselves,
+  // innermost group first, so an outer box that had to grow pushes its own neighbours in turn.
+  const rectsNow = d => new Map(d.items.map(i => [i.id, Object.assign({}, vr(i))]));
+  function reflow(d, old){
+    const m = mapOf(d), hid = hiddenSet(d), groups = {};
+    const dep = id => { let n = 0, q = m.get(id); while (q && q.parent && n < 50){ q = m.get(q.parent); n++; } return n; };
+    const mv = (it, dx, dy) => { it.x += dx; it.y += dy; descendants(d, it).forEach(c => { c.x += dx; c.y += dy; }); };
+    d.items.forEach(it => { if (hid.has(it.id) || !old.has(it.id)) return; const k = it.parent || ''; (groups[k] = groups[k] || []).push(it); });
+    Object.keys(groups).sort((a, b) => (b ? dep(b) : -1) - (a ? dep(a) : -1)).forEach(k => {
+      const g = groups[k];
+      for (let pass = 0; pass < 300; pass++){
+        let moved = false;
+        for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++){
+          const a = g[i], b = g[j], A = vr(a), B = vr(b), oa = old.get(a.id), ob = old.get(b.id), c = [];
+          const ys = A.y < B.y + B.h && B.y < A.y + A.h, xs = A.x < B.x + B.w && B.x < A.x + A.w;
+          const sx = oa.x + oa.w <= ob.x + 1 ? 1 : (ob.x + ob.w <= oa.x + 1 ? 2 : 0);   // which one sat on the left before
+          if (sx && ys){
+            const [P, Q, op, oq, q] = sx === 1 ? [A, B, oa, ob, b] : [B, A, ob, oa, a];
+            const amt = Math.ceil(P.x + P.w + Math.min(30, Math.max(0, oq.x - (op.x + op.w))) - Q.x);
+            if (amt > 0) c.push({ q, dx:amt, dy:0 });
+          }
+          const sy = oa.y + oa.h <= ob.y + 1 ? 1 : (ob.y + ob.h <= oa.y + 1 ? 2 : 0);   // which one sat above before
+          if (sy && xs){
+            const [P, Q, op, oq, q] = sy === 1 ? [A, B, oa, ob, b] : [B, A, ob, oa, a];
+            const amt = Math.ceil(P.y + P.h + Math.min(30, Math.max(0, oq.y - (op.y + op.h))) - Q.y);
+            if (amt > 0) c.push({ q, dx:0, dy:amt });
+          }
+          if (c.length){ c.sort((p, q) => (p.dx + p.dy) - (q.dx + q.dy)); mv(c[0].q, c[0].dx, c[0].dy); moved = true; }
+        }
+        if (!moved) break;
+      }
+      growFrames(d);   // an outer box grows to hold what was pushed, before its own neighbours are looked at
+    });
+  }
+  function toggleFrame(id){
+    const f = byId(id); if (!f) return;
+    commit(() => {
+      const d = deck(), old = rectsNow(d), was = !!f.collapsed;
+      if (was) delete f.collapsed; else f.collapsed = true;
+      if (was) reflow(d, old);
+      settle(d);
+    });
+    state.sel = { kind:f.kind, id }; state.barOn = false; renderCanvas(); inspector();
+  }
+  $('colAll').onclick = () => { commit(() => deck().items.forEach(i => { if (i.kind === 'frame') i.collapsed = true; })); inspector(); fit(); };
+  $('expAll').onclick = () => { commit(() => { const d = deck(), old = rectsNow(d); d.items.forEach(i => { delete i.collapsed; }); reflow(d, old); settle(d); }); inspector(); fit(); };
+
+  // ----- adding things -----
+  const newBox = label => ({ id:nid(), kind:'card', name:'New box', label:label || '', text:'', w:CW, h:120 });
+  function addBox(at, label){
+    const it = newBox(label);
+    place0(it, at); commit(() => { deck().items.push(it); settle(deck(), [it]); });
+    select({ kind:'card', id:it.id }); focusTitle();
+  }
+  // Add a new box directly inside box `fid`, below what is already there.
+  function addIn(fid, deferFocus, label){
+    const d = deck(), f = byId(fid); if (!f) return;
+    const it = newBox(label);
+    commit(() => growTracked(d, () => {
+      let q = f; while (q){ delete q.collapsed; q = q.parent && byId(q.parent); }
+      const kids = d.items.filter(x => x.parent === f.id);
+      if (!kids.length) f.th = thOf(f);
+      it.x = f.x + 20; it.y = kids.length ? Math.max(...kids.map(k => { const r = vr(k); return r.y + r.h; })) + 16 : f.y + hdOf(f) + 14;
+      it.parent = f.id; d.items.push(it); syncKinds(d);
+      let a = f, rr = vr(it);
+      while (a){ a.w = Math.max(a.w, rr.x + rr.w + 20 - a.x); a.h = Math.max(a.h, rr.y + rr.h + 20 - a.y); rr = { x:a.x, y:a.y, w:a.w, h:a.h }; a = a.parent && byId(a.parent); }
+      settle(d);   // slide what sits below down once the box has its final size (growTracked); never re-pack the whole deck
+    }));
+    select({ kind:'card', id:it.id }); deferFocus ? setTimeout(focusTitle, 60) : focusTitle();
+  }
+  function addPrompts(fid, names){
+    const d = deck(), f = byId(fid); if (!f) return;
+    const have = new Set(d.items.filter(x => x.parent === f.id).map(x => x.name.toLowerCase()));
+    const ps = (names || STARTERS[kindFor(f)] || promptsFor(f)).filter(p => !have.has(pName(p).toLowerCase()) || (names && names.length === 1 && isRep(p))); if (!ps.length) return;
+    const n0 = d.items.length;
+    commit(() => growTracked(d, () => {
+      let q = f; while (q){ delete q.collapsed; q = q.parent && byId(q.parent); }
+      const kids = d.items.filter(x => x.parent === f.id);
+      if (!kids.length) f.th = thOf(f);
+      let y = kids.length ? Math.max(...kids.map(k => k.y + k.h)) + 12 : f.y + hdOf(f) + 14, x = kids.length ? kids[0].x : f.x + 20;
+      ps.forEach(p => { d.items.push({ id:nid(), kind:'card', name:pName(p), label:'Detail', text:p.includes('=') ? p.split('=').slice(1).join('=') : '', x, y, w:CW, h:76, parent:f.id }); y += 76 + 12; });
+      syncKinds(d);
+      let a = f, rr = { x, y:f.y, w:CW, h:y - 12 - f.y };
+      while (a){ a.w = Math.max(a.w, rr.x + rr.w + 20 - a.x); a.h = Math.max(a.h, rr.y + rr.h + 20 - a.y); rr = { x:a.x, y:a.y, w:a.w, h:a.h }; a = a.parent && byId(a.parent); }
+      settle(d);
+    }));
+    const first = d.items[n0];
+    if (first){ select({ kind:'card', id:first.id }); setTimeout(() => startBody(first.id), 30); } else select({ kind:'frame', id:f.id });
+  }
+  const kindFor = it => kindKey(it);
+  // A small menu under the "+ details" button: pick one detail at a time, or a starter set.
+  function openDetMenu(id, btn){
+    closeDetMenu();
+    const d = deck(), f = byId(id); if (!f) return;
+    const left = leftOf(d, f);
+    if (!left.length) return;
+    const have = haveOf(d, f), fresh = left.filter(p => !p.includes('=') && !have.has(pName(p).toLowerCase()));
+    const st = (STARTERS[kindFor(f)] || fresh).filter(p => fresh.includes(p));
+    const m = document.createElement('div'); m.id = 'detmenu';
+    const row = (t, names, cls) => '<button class="' + (cls || '') + '" data-names="' + esc(JSON.stringify(names)) + '">' + esc(t) + '</button>';
+    const top = (st.length ? row(STARTERS[kindFor(f)] ? 'Starter set: ' + st.map(p => p.replace(/ \(.*|:$/g, '')).join(', ') : 'Add all', st, 'all') : '') +
+      (STARTERS[kindFor(f)] && fresh.length > st.length ? row('Add all (' + fresh.length + ')', fresh, 'all') : '');
+    if (kindFor(f) === 'data viz'){
+      // two separate lists, one at a time: Altair / Vega-Lite encodings, or chart types
+      const enc = left.filter(p => !p.includes('=') && COMMON.some(c => pName(p).startsWith(c))), rare = left.filter(p => !p.includes('=') && !COMMON.some(c => pName(p).startsWith(c))), types = left.filter(p => p.includes('='));
+      const back = '<button class="blank" type="button" data-view="top">‹ Back</button>';
+      const views = {
+        top: top + (enc.length || rare.length ? '<button type="button" data-view="enc">Altair / Vega-Lite (declarative) ▸</button>' : '') + (types.length ? '<button type="button" data-view="types">Chart types ▸</button>' : ''),
+        enc: back + '<div class="gh">Altair / Vega-Lite (declarative)</div>' + enc.map(p => row(pName(p), [p])).join('') + (rare.length ? '<button class="moreenc" type="button">More encodings ▸</button><div class="rare" hidden>' + rare.map(p => row(pName(p), [p])).join('') + '</div>' : ''),
+        types: back + '<div class="gh">Chart types</div>' + types.map(p => row(p.split('=')[1], [p])).join('')
+      };
+      m.innerHTML = views.top; m._views = views;
+    } else m.innerHTML = top + left.map(p => row(pName(p), [p])).join('');
+    document.body.appendChild(m);
+    const r = btn.getBoundingClientRect(); m.style.left = Math.min(r.left, innerWidth - 250) + 'px'; m.style.top = Math.min(r.bottom + 4, innerHeight - 320) + 'px';
+    m.addEventListener('pointerdown', e => { const b = e.target.closest('button'); if (!b) return; e.preventDefault(); e.stopPropagation(); if (b.dataset.view){ m.innerHTML = m._views[b.dataset.view]; m.scrollTop = 0; return; } if (b.classList.contains('moreenc')){ const r = m.querySelector('.rare'); r.hidden = !r.hidden; b.textContent = r.hidden ? 'More encodings ▸' : 'Fewer encodings ▾'; return; } closeDetMenu(); addPrompts(id, JSON.parse(b.dataset.names)); });
+  }
+  function closeDetMenu(){ const m = $('detmenu'); if (m) m.remove(); }
+  document.addEventListener('pointerdown', e => { if (!e.target.closest('#detmenu, [data-det]')) closeDetMenu(); }, true);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetMenu(); });
+  function place0(it, at){
+    const r = rectOf(), v = state.v;
+    const c = at || { x:(r.width / 2 - v.x) / v.k, y:(r.height / 2 - v.y) / v.k };
+    let x = Math.round((c.x - it.w / 2) / 10) * 10, y = Math.round((c.y - it.h / 2) / 10) * 10;
+    const hid = hiddenSet(deck());   // nudge the new box off any card or tile it would land on top of
+    const clash = (px, py) => deck().items.some(o => { if (hid.has(o.id) || !(o.kind === 'card' || o.collapsed)) return false; const q = vr(o); return px < q.x + q.w + 10 && px + it.w + 10 > q.x && py < q.y + q.h + 10 && py + it.h + 10 > q.y; });
+    for (let n = 0; n < 60 && clash(x, y); n++){ x += 30; y += 30; }
+    it.x = x; it.y = y;
+  }
+  function focusTitle(){ const s = state.sel; if (s && s.kind !== 'link' && els.get(s.id)){ startInline(s.id); } }
+  function addStarter(){
+    const r = rectOf(), v = state.v, gap = 90, total = 3 * CW + 2 * gap;
+    const cx = (r.width / 2 - v.x) / v.k, cy = (r.height / 2 - v.y) / v.k, x0 = Math.round((cx - total / 2) / 10) * 10, y0 = Math.round((cy - 10) / 10) * 10;
+    const mk = (n, i) => ({ id:nid(), kind:'card', name:({ 'Data':'Name this data', 'Process':'Name this step', 'Data viz':'Name this chart' })[n], label:n, ph:true, text:'', x:x0 + i * (CW + gap), y:y0, w:CW, h:130 });
+    const goal = { id:nid(), kind:'card', name:'Name this goal', label:'Goal', ph:true, text:'', x:x0 + CW + gap, y:y0 - 170, w:CW, h:110 };
+    const bs = ['Data', 'Process', 'Data viz'].map(mk);
+    commit(() => { deck().items.push(goal); bs.forEach(b => deck().items.push(b)); deck().links.push({ a:bs[0].id, b:bs[1].id }, { a:bs[1].id, b:bs[2].id }); });
+    select(null);
+  }
+  function buildPalette(){
+    $('startBtn').onclick = addStarter;
+    $('addCard').onclick = () => {   // next to the selected box (inside the same parent), else on the open canvas
+      const s0 = state.sel, it = s0 && s0.kind !== 'link' ? byId(s0.id) : null;
+      if (it && it.parent && byId(it.parent)) addIn(it.parent, false, it.label);
+      else if (it){ const r = vr(it); addBox({ x:r.x + r.w + 40 + CW / 2, y:r.y + r.h / 2 }, it.label); }   // top-level: to the right of it
+      else addBox();
+    };
+  }
+  // ----- selection + inspector -----
+  function select(s){ state.sel = s; state.barOn = false; renderCanvas(); inspector(); }
+  function setTab(t){
+    state.tab = t;
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+    ['text','ai'].forEach(n => $('pane-' + n).classList.toggle('on', n === t));
+    refreshText();
+  }
+  document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => setTab(b.dataset.t));
+  // The Text and For AI tabs live in a dialog; selecting a box shows a small bar next to it instead of a side panel.
+  function openDlg(t){ if (state.ix < 0) return; $('side').classList.add('open'); setTab(t); }
+  function closeDlg(){ $('side').classList.remove('open'); state.tab = null; outEdited = false; }
+  $('dlgx').onclick = closeDlg;
+  $('side').addEventListener('mousedown', e => { if (e.target === $('side')) closeDlg(); });
+  $('txtBtn').onclick = () => { $('menu').open = false; openDlg('text'); };
+  function positionBar(){
+    const bar = $('bar'), s = state.sel; if (!bar || bar.hidden) return;
+    if (!s || !exists(s)){ bar.hidden = true; return; }
+    const target = s.kind === 'link' ? linksSvg.querySelector('[data-lk="' + s.key + '"]') : els.get(s.id);
+    if (!target){ bar.hidden = true; return; }
+    const c = cv.getBoundingClientRect(), r = target.getBoundingClientRect(), bw = bar.offsetWidth, bh = bar.offsetHeight;
+    let x = r.left - c.left + r.width / 2 - bw / 2, y = r.bottom - c.top + 8;
+    if (y + bh > c.height - 8) y = r.top - c.top - bh - 8;
+    x = Math.max(8, Math.min(x, c.width - bw - 8)); y = Math.max(8, y);
+    bar.style.left = x + 'px'; bar.style.top = y + 'px'; bar.classList.toggle('up', y + bh + 200 > c.height);
+  }
+  // A container with no text has no strip to click; this opens one.
+  function openFrameText(f){
+    if (!f.th){ const d = deck(), top = topOf(f), r0 = vr(top), ob = r0.y + r0.h; f.th = 30; descendants(d, f).forEach(c => { c.y += 30; }); f.h += 30; growFrames(d); makeRoom(d, top, ob); }
+    renderCanvas(); startBody(f.id);
+  }
+
+  function bind(id, set){
+    const el = $(id); if (!el) return; let before = null;
+    el.addEventListener('focus', () => { before = snap(); });
+    el.addEventListener('input', () => { set(el.value); renderCanvas(); fitSel(); });
+    el.addEventListener('change', () => { if (before && snap() !== before) pushHist(before); before = null; save(); refreshText(); });
+  }
+  bind('f-ddesc', v => { deck().desc = v; });
+  function armDelete(btn, fn, msg){
+    let armed = false, t; const o = btn.textContent;
+    btn.onclick = () => { if (!armed){ armed = true; btn.textContent = msg || 'Click again to confirm'; t = setTimeout(() => { armed = false; btn.textContent = o; }, 3000); } else { clearTimeout(t); fn(); } };
+  }
+  function inspector(){
+    const bar = $('bar'), d = deck(), s = state.sel;
+    if (!s || !exists(s) || !state.barOn){ bar.hidden = true; bar.innerHTML = ''; bar.dataset.sig = ''; return; }
+    if (s.kind === 'link'){
+      bar.dataset.sig = '';
+      const [a, b] = s.key.split('>').map(byId);
+      bar.innerHTML = '<div class="r"><span class="muted" style="text-align:center;white-space:normal">Arrow from [' + esc(a.name) + '] to [' + esc(b.name) + ']</span></div><div class="r"><button class="btn" id="rev">Reverse arrow</button><button class="btn danger" id="del">Delete arrow</button></div><div class="r"><span class="muted" style="text-align:center;white-space:normal">The boxes stay.</span></div>';
+      $('rev').onclick = () => { commit(() => { const l = d.links.find(l => l.a + '>' + l.b === s.key); [l.a, l.b] = [l.b, l.a]; }); state.sel = { kind:'link', key:b.id + '>' + a.id }; renderCanvas(); inspector(); };
+      $('del').onclick = () => { commit(() => { d.links = d.links.filter(l => l.a + '>' + l.b !== s.key); state.sel = null; }); inspector(); };
+      bar.hidden = false; positionBar(); return;
+    }
+    const it = byId(s.id), isF = it.kind === 'frame', isDet = lab(it) === 'Detail';
+    const html = (isDet ? '' :
+        '<div class="r"><select id="f-label" title="Label"><option value="">No label</option>' + LABELS.map(x => '<option value="' + x[0] + '"' + (x[0].toLowerCase() === (it.label || '').toLowerCase() ? ' selected' : '') + '>' + x[2] + ' ' + x[0] + '</option>').join('') +
+          ((it.label && !LABELS.some(x => x[0].toLowerCase() === it.label.toLowerCase())) ? '<option value="' + esc(it.label) + '" selected>' + esc(it.label) + '</option>' : '') + '</select>' +
+        '<input type="number" min="1" id="f-step" placeholder="Step" title="Step number (optional)" value="' + (it.step || '') + '"></div>') +
+      '<div class="r">' + (isDet ? '' : '<button class="btn" id="inside" title="Add a new box inside this one">+ Inside</button>') + (isF || isDet ? '' : '<button class="btn" id="dup">Duplicate</button>') +
+      '<button class="btn danger" id="del">Delete</button>' +
+      (isDet ? '' : '<button class="btn" id="more">More ▾</button>') + '</div>' +
+      (isDet ? '' : '<div class="more" id="morebox" hidden>' + nestHTML(it, d) +
+        (leftOf(d, it).length ? '<div class="row"><button class="btn" id="qs">Prompts…</button></div>' : '') + (isF ? '<div class="row"><button class="btn" id="fitbox">Fit to its boxes</button><button class="btn" id="img">Save as image</button></div><div class="muted" id="imgMsg"></div>' + (!(it.text || '').trim() ? '<div class="row"><button class="btn" id="addtxt">Add text to this box</button></div>' : '') + '' : '') + '</div>');
+    // Same box, same contents: keep the bar as it is, so a click is not lost when an editor closing causes a redraw. Handlers look the box up when used.
+    if (!bar.hidden && bar.dataset.sig === s.id + '|' + html){ positionBar(); return; }
+    bar.innerHTML = html; bar.dataset.sig = s.id + '|' + html;
+    const cur = () => byId(s.id);
+    if (!isDet){
+      $('f-label').onchange = e => { const v = e.target.value; commit(() => { cur().label = v; }); };
+      bind('f-step', v => { const n = parseInt(v, 10), c = cur(); if (n > 0) c.step = n; else delete c.step; });
+      $('more').onclick = () => { $('morebox').hidden = !$('morebox').hidden; };
+      $('inside').onclick = () => addIn(s.id, false);
+      if ($('qs')) $('qs').onclick = () => openDetMenu(s.id, $('qs'));
+      $('f-par').onchange = e => moveInto(cur(), e.target.value === '__top' ? '' : e.target.value);
+      $('wrap').onclick = () => wrapInFrame(cur());
+      $('addin').onclick = () => addIn(s.id, false);
+      if (isF){
+        $('fitbox').onclick = () => { commit(() => growTracked(deck(), () => fitChain(deck(), s.id))); };
+        $('img').onclick = () => { $('imgMsg').textContent = saveImage(s.id) ? 'Saved to your downloads.' : 'The browser blocked the download here. Open this file in your own browser to save images.'; };
+        if ($('addtxt')) $('addtxt').onclick = () => { $('morebox').hidden = true; openFrameText(cur()); };
+      } else {
+        $('dup').onclick = () => { const o = cur(), c = { ...o, id:nid(), x:o.x + 30, y:o.y + 30 }; delete c.step; commit(() => deck().items.push(c)); select({ kind:'card', id:c.id }); };
+      }
+    }
+    armDelete($('del'), () => { commit(() => { deleteItem(deck(), cur()); state.sel = null; }); inspector(); }, isF ? 'Delete ' + (descendants(d, it).length + 1) + ' boxes?' : '');
+    bar.hidden = false; positionBar();
+  }
+  document.addEventListener('keydown', e => {
+    const tg = e.target.tagName, typing = tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT' || !!e.target.isContentEditable;
+    if (e.key === 'Escape' && $('side').classList.contains('open')){ closeDlg(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !typing && !$('side').classList.contains('open') && state.ix >= 0){ e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y' && !typing && state.ix >= 0){ e.preventDefault(); redo(); return; }
+    if (e.key === 'Escape' && $('menu').open){ $('menu').open = false; return; }
+    if (typing || state.ix < 0) return;
+    if (e.key === 'Escape') select(null);
+    if ((e.key === 'Delete' || e.key === 'Backspace') && state.sel && exists(state.sel)){
+      e.preventDefault(); const s = state.sel, d = deck();
+      commit(() => {
+        if (s.kind === 'link') d.links = d.links.filter(l => l.a + '>' + l.b !== s.key);
+        else deleteItem(d, byId(s.id));
+        state.sel = null;
+      }); inspector();
+    }
+    const arrows = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1] };
+    if (arrows[e.key] && state.sel && state.sel.kind !== 'link' && exists(state.sel)){
+      e.preventDefault(); const it = byId(state.sel.id), st = e.shiftKey ? 1 : 10, grp = it.kind === 'frame' ? [it, ...descendants(deck(), it)] : [it];
+      commit(() => { grp.forEach(g => { g.x += arrows[e.key][0] * st; g.y += arrows[e.key][1] * st; }); growTracked(deck(), () => settle(deck())); });
+    }
+  });
+
+  // ================= text + AI panes =================
+  function exportText(){
+    const d = deck(), mode = $('mode').value;
+    if (mode === 'json') return JSON.stringify(d, null, 2);
+    const lay = $('lay').checked;
+    let o = { layout:lay, dropEmpty:$('hdr').checked, noFolder:true };
+    if (mode === 'titles') o.state = n => n.children.length ? 'expand' : 'title';
+    let target = null;
+    const isCell = mode === 'cell' || mode === 'change';
+    if (mode === 'selection' || isCell){
+      const sid = state.sel && state.sel.kind !== 'link' ? state.sel.id : null, sit = sid && byId(sid);
+      const fr = sit ? (isCell ? (lab(sit) === 'Detail' && sit.parent ? byId(sit.parent) : sit) : (sit.kind === 'frame' ? sit : (sit.parent ? byId(sit.parent) : null))) : null;
+      if (fr){
+        target = fr;
+        const m = mapOf(d), anc = new Set(); let q = fr.parent; while (q){ anc.add(q); q = m.get(q) && m.get(q).parent; }
+        const under = it => { let p = it.id === fr.id ? it.id : it.parent; while (p){ if (p === fr.id) return true; p = m.get(p) && m.get(p).parent; } return false; };
+        o.state = n => n.children.length ? (under(n.it) ? 'full' : (anc.has(n.it.id) ? 'expand' : 'collapse')) : (under(n.it) ? 'full' : 'title');
+      }
+    }
+    if (isCell){
+      o.layout = false; o.dropEmpty = true;
+      if (!o.state) return mode === 'change' ? 'Select the box whose cell you want to change. This will then hold a request to change that one cell in the notebook you already have open.' : 'Select a box on the canvas first. This will then hold a request for just that box, to add to the notebook you already have open.';
+      const vars = ($('vars').value || '').trim(), vl = vars ? '\n\nMY VARIABLES (names already in my notebook): ' + vars : '', dk = '\n\nDECK (this box in full, the others only for context)\n' + toText(d, o);
+      if (mode === 'change') return CHANGE_REQUEST + '\n\nTHE BOX WHOSE CELL TO CHANGE: ' + target.name + vl + '\n\nTHE CELL AS IT IS NOW (paste the code between the lines):\n-----\n[paste the cell here]\n-----\n\nWHAT TO CHANGE:\n[say in a sentence or two what is wrong or what you want]' + dk;
+      return CELL_REQUEST + '\n\nTHE BOX TO WRITE A CELL FOR: ' + target.name + vl + dk;
+    }
+    const notes = $('hdr').checked ? layoutNotes(d) : '';
+    const svg = $('hdr').checked ? deckSVG(d) : '';
+    return ($('hdr').checked ? requestText($('ct').checked) + '\n\n' + (notes ? 'LAYOUT (how the boxes are arranged on my canvas)\n' + notes + '\n\n' : '') : '') + toText(d, o) + (svg ? '\n\nDIAGRAM (SVG)\n' + svg : '');
+  }
+  let outEdited = false;
+  function refreshText(){
+    if (state.ix < 0) return;
+    if (state.tab === 'text'){ $('txt').value = toText(deck(), { layout:true }); if (document.activeElement !== $('f-ddesc')) $('f-ddesc').value = deck().desc || ''; }
+    if (state.tab === 'ai' && document.activeElement !== $('vars')) $('vars').value = deck().vars || '';
+    if (state.tab === 'ai' && !outEdited){ $('out').value = exportText(); $('status').textContent = ''; }
+  }
+  async function copyOut(text, statusEl, ta){
+    try { await navigator.clipboard.writeText(text); statusEl.textContent = 'Copied.'; }
+    catch(e){ try { ta.focus(); ta.select(); document.execCommand('copy'); statusEl.textContent = 'Copied.'; } catch(e2){ statusEl.textContent = 'Select the text and press Ctrl/Cmd+C.'; } }
+  }
+  const fresh = () => { outEdited = false; refreshText(); };
+  $('out').addEventListener('input', () => { outEdited = true; $('status').textContent = 'Edited. Changing an option above starts over from the original text.'; });
+  $('mode').onchange = () => { const c = $('mode').value === 'cell' || $('mode').value === 'change'; ['hdr','ct','lay'].forEach(k => { $(k).disabled = c; $(k).parentNode.style.opacity = c ? .45 : 1; }); $('varsRow').style.display = c ? '' : 'none'; fresh(); };
+  $('vars').addEventListener('input', e => { const v = e.target.value.trim(); if (state.ix >= 0){ if (v) deck().vars = v; else delete deck().vars; save(); } fresh(); }); $('lay').onchange = fresh; $('ct').onchange = fresh;
+  $('hdr').onchange = () => { if ($('hdr').checked) $('lay').checked = true; fresh(); };
+  $('copy').onclick = () => { if (!outEdited) $('out').value = exportText(); $('out').select(); copyOut($('out').value, $('status'), $('out')); };
+  $('toAI').onclick = () => { outEdited = false; openDlg('ai'); $('out').value = exportText(); $('out').select(); copyOut($('out').value, $('status'), $('out')); };
+
+  const FENCE = /```specdeck[^\n]*\n([\s\S]*?)\n```/;
+  function decksFromAny(raw){
+    const s = String(raw).trim();
+    if (s[0] === '{' || s[0] === '['){
+      const o = JSON.parse(s);
+      if (o && Array.isArray(o.cells)){
+        const found = [];
+        o.cells.forEach(c => { const src = Array.isArray(c.source) ? c.source.join('') : String(c.source || ''); const m = src.match(FENCE); if (m) found.push(...parseText(m[1])); });
+        if (!found.length) throw new Error('This notebook has no ```specdeck block.');
+        return found;
+      }
+      return Array.isArray(o) ? o : (Array.isArray(o.decks) ? o.decks : [o]);
+    }
+    const m = s.match(FENCE);
+    return parseText(m ? m[1] : s);
+  }
+  function tmsg(m, bad){ const e = $('tstatus'); e.className = 'status' + (bad ? ' err' : ''); e.textContent = m; }
+  function addDecks(list){
+    if (!list.length) throw new Error('Nothing to add.');
+    let first = -1;
+    list.map(normalizeDeck).forEach(d => {
+      if (!d.name) throw new Error('A deck needs a name.');
+      const k = state.lib.findIndex(x => x.name === d.name);
+      if (k >= 0){ state.lib[k] = d; if (first < 0) first = k; } else { state.lib.push(d); if (first < 0) first = state.lib.length - 1; }
+    });
+    save(); openDeck(first); return list.length;
+  }
+  function readFile(file){
+    const r = new FileReader();
+    r.onload = () => { try { const n = addDecks(decksFromAny(r.result)); tmsg('Added ' + plural(n, 'deck') + ' from ' + file.name + '.'); } catch(e){ alert0(file.name + ': ' + e.message); } };
+    r.readAsText(file);
+  }
+  function alert0(m){ if (state.ix >= 0){ openDlg('text'); tmsg(m, true); } else { const p = document.querySelector('#homeView p'); p.textContent = m; p.style.color = '#a12626'; } }
+  $('file').onchange = e => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ''; $('menu').open = false; };
+  let dragN = 0;
+  window.addEventListener('dragenter', e => { e.preventDefault(); dragN++; $('drop').style.display = 'flex'; });
+  window.addEventListener('dragleave', e => { e.preventDefault(); if (--dragN <= 0){ dragN = 0; $('drop').style.display = 'none'; } });
+  window.addEventListener('dragover', e => e.preventDefault());
+  window.addEventListener('drop', e => { e.preventDefault(); dragN = 0; $('drop').style.display = 'none'; if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
+  $('repl').onclick = () => {
+    try {
+      const list = decksFromAny($('txt').value);
+      if (list.length !== 1) throw new Error('The text holds ' + list.length + ' decks. Use "Add as new deck" instead.');
+      const nd = normalizeDeck(list[0]); const b = snap();
+      state.lib[state.ix] = nd; pushHist(b); state.sel = null; save(); renderAll(); fit(); tmsg('Replaced.');
+    } catch(e){ tmsg('Could not apply: ' + e.message, true); }
+  };
+  // Import: other copies of this app, opened from disk in the same browser, keep their decks in the same browser storage under their own slot.
+  $('impBtn').onclick = () => {
+    const box = $('impList'); if (box.dataset.open){ box.innerHTML = ''; delete box.dataset.open; return; }
+    box.dataset.open = '1';
+    const found = [], seen = new Set(state.lib.map(d => JSON.stringify(d.items.map(i => [i.name, i.label, i.text, i.parent]))));
+    try {
+      for (let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i); if (!/^specdeck-v[34]/.test(k) || k === KEY) continue;
+        let arr; try { arr = JSON.parse(localStorage.getItem(k)); } catch(e){ continue; }
+        if (!Array.isArray(arr)) continue;
+        arr.forEach(d => {
+          if (!d || !Array.isArray(d.items) || !d.items.length) return;
+          const sig = JSON.stringify(d.items.map(i => [i.name, i.label || i.type || '', i.text || i.desc || '', i.parent])); if (seen.has(sig)) return; seen.add(sig);
+          found.push({ d, slot:k.replace(/^specdeck-v\d-?/, '') || 'older' });
+        });
+      }
+    } catch(e){}
+    if (!found.length){ box.innerHTML = '<div class="muted" style="padding:4px 6px">No decks from other copies were found in this browser. (Browsers can keep copies of the file separate; if so, use Copy all decks in the old file and paste into the Text tab here.)</div>'; return; }
+    box.innerHTML = '<div class="muted" style="padding:4px 6px">Decks found in other copies. Click one to add it here.</div>' + found.map((f, i) => '<button class="btn" data-i="' + i + '" style="text-align:left;width:100%">' + esc(f.d.name || 'Untitled') + ' <span class="muted">· ' + f.d.items.length + ' boxes · copy ' + esc(f.slot) + '</span></button>').join('');
+    box.onclick = e => { const b = e.target.closest('button[data-i]'); if (!b) return; const f = found[+b.dataset.i]; try { const c = JSON.parse(JSON.stringify(f.d)); const taken = n => state.lib.some(x => x.name === n); if (taken(c.name)){ let n = c.name + ' (imported)', k = 2; while (taken(n)) n = c.name + ' (imported ' + k++ + ')'; c.name = n; } addDecks([c]); b.disabled = true; b.insertAdjacentHTML('beforeend', ' ✓ added'); } catch(err){ b.insertAdjacentHTML('beforeend', ' (could not add)'); } };
+  };
+  $('addj').onclick = () => { try { addDecks(decksFromAny($('txt').value)); tmsg('Added.'); } catch(e){ tmsg('Could not add: ' + e.message, true); } };
+  $('copyAll').onclick = () => { const t = state.lib.map(d => toText(d, { layout:true })).join('\n\n\n'); const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); copyOut(t, $('tstatus'), ta).then(() => ta.remove()); };
+
+  // ================= top bar, home, routing =================
+  document.addEventListener('pointerdown', e => { const m = $('menu'); if (m.open && !m.contains(e.target)){ m.open = false; $('menuMsg').textContent = ''; } });
+  $('undo').onclick = undo; $('redo').onclick = redo;
+  $('tidy').onclick = () => { commit(() => layoutStruct(deck(), structOf(deck()))); fit(); };
+  $('homeBtn').onclick = () => { state.ix = -1; state.sel = null; showView(); };
+  $('deckName').addEventListener('input', e => { if (state.ix >= 0){ deck().name = e.target.value; } });
+  $('deckName').addEventListener('focus', () => { $('deckName')._b = snap(); });
+  $('deckFolder').addEventListener('focus', () => { $('deckFolder')._b = snap(); $('folderList').innerHTML = [...new Set(state.lib.map(d => (d.folder || '').trim()).filter(Boolean))].map(f => '<option value="' + esc(f) + '">').join(''); });
+  $('deckFolder').addEventListener('input', e => { if (state.ix < 0) return; const v = e.target.value.trim(); if (v) deck().folder = v; else delete deck().folder; });
+  $('deckFolder').addEventListener('change', () => { const b = $('deckFolder')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
+  $('deckName').addEventListener('change', e => { const b = $('deckName')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
+  $('reset').onclick = () => { try { localStorage.removeItem(KEY); } catch(e){} state.lib = seedDecks(); state.ix = -1; state.sel = null; $('menu').open = false; boot(); };
+  armDelete($('delDeck'), () => {
+    if (state.ix < 0) return;
+    state.lib.splice(state.ix, 1); state.ix = -1; $('menu').open = false; save(); showView();
+  });
+
+  function openDeck(i){
+    state.ix = i; state.sel = null; state.hist = []; state.fut = [];
+    $('deckName').value = deck().name; syncUndo(); showView();
+  }
+  function showView(){
+    const home = state.ix < 0;
+    $('homeView').style.display = home ? 'block' : 'none';
+    $('work').style.display = home ? 'none' : 'flex';
+    $('deckTools').style.display = home ? 'none' : 'flex';
+    $('deckName').style.display = home ? 'none' : '';
+    $('deckFolder').style.display = home ? 'none' : '';
+    $('homeBtn').style.display = home ? 'none' : '';
+    $('delDeck').style.display = home ? 'none' : '';
+    $('dlDeck').style.display = home ? 'none' : '';
+    $('dlImg').style.display = home ? 'none' : '';
+    if (home){ renderHome(); return; }
+    els.forEach(el => el.remove()); els.clear();
+    renderAll(); requestAnimationFrame(fit);
+  }
+  function renderAll(skipInspector){
+    renderCanvas(); if (!skipInspector) inspector(); refreshText(); syncUndo(); applyView();
+    if (document.activeElement !== $('deckName')) $('deckName').value = deck().name;
+    if (document.activeElement !== $('deckFolder')) $('deckFolder').value = deck().folder || '';
+  }
+  let armDel = -1, armT = null;
+  function renderHome(){
+    const svg = $('homeSvg'), hv = $('homeView'), NS = 'http://www.w3.org/2000/svg';
+    const W = Math.max(360, hv.clientWidth - 40);
+    const mk = (par, tag, at, txt) => { const e = document.createElementNS(NS, tag); for (const k in at) if (at[k] != null) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; par.appendChild(e); return e; };
+    svg.textContent = '';
+    const p = document.querySelector('#homeView p');
+    p.textContent = state.lib.length ? 'Each circle is a deck. Click one to open its canvas, or start a new deck with the dashed circle.' : 'No decks yet. Click “+ New deck” to start, or drop a deck text file or notebook anywhere on the page.';
+    p.style.color = '';
+    const rOf = d => Math.min(112, 66 + 2.5 * d.items.length), gap = 22, groups = new Map(), units = [];
+    state.lib.forEach((d, i) => {
+      const f = (d.folder || '').trim();
+      if (!f) units.push({ i, d, r:rOf(d) });
+      else { let u = groups.get(f); if (!u){ u = { folder:f, kids:[] }; groups.set(f, u); units.push(u); } u.kids.push({ i, d, r:rOf(d) * 0.85 }); }
+    });
+    units.forEach(u => {   // a folder is a circle that holds its deck circles, or a single closed circle
+      if (!u.folder) return;
+      u.closed = u.kids.every(k => k.d.fold);
+      if (u.closed){ u.r = 84; return; }
+      const n = u.kids.length, cols = n <= 2 ? n : Math.ceil(Math.sqrt(n)), rws = []; for (let k = 0; k < n; k += cols) rws.push(u.kids.slice(k, k + cols));
+      const rh = rws.map(r => Math.max(...r.map(k => k.r)) * 2), rw = rws.map(r => r.reduce((s, k) => s + k.r * 2, 0) + 14 * (r.length - 1)), th = rh.reduce((s, h) => s + h, 0) + 14 * (rws.length - 1);
+      let yy = -th / 2 + 14;
+      rws.forEach((r, a) => { let xx = -rw[a] / 2; r.forEach(k => { k.ox = xx + k.r; k.oy = yy + rh[a] / 2; xx += k.r * 2 + 14; }); yy += rh[a] + 14; });
+      u.r = Math.max(70, Math.max(...u.kids.map(k => Math.hypot(k.ox, k.oy) + k.r)) + 30);
+    });
+    const items = [...units, { add:true, r:62 }];
+    const rows = []; let row = [], used = 0;
+    items.forEach(it => { const w = it.r * 2; if (row.length && used + gap + w > W){ rows.push(row); row = []; used = 0; } used += (row.length ? gap : 0) + w; row.push(it); });
+    rows.push(row);
+    let y = 10;
+    rows.forEach(r => {
+      const rh = Math.max(...r.map(it => it.r)) * 2, tw = r.reduce((s, it) => s + it.r * 2, 0) + gap * (r.length - 1);
+      let x = (W - tw) / 2;
+      r.forEach(it => { it.x = x + it.r; it.y = y + rh / 2; x += it.r * 2 + gap; if (it.folder && !it.closed) it.kids.forEach(k => { k.x = it.x + k.ox; k.y = it.y + k.oy; }); });
+      y += rh + gap;
+    });
+    svg.setAttribute('width', W); svg.setAttribute('height', Math.max(380, y));
+    const draw = []; items.forEach(it => { draw.push(it); if (it.folder && !it.closed) it.kids.forEach(k => draw.push(k)); });
+    draw.forEach(it => {
+      if (it.folder){
+        const r = it.r, g = mk(svg, 'g', { 'class':'fold', transform:'translate(' + it.x + ',' + it.y + ')' });
+        mk(g, 'circle', { 'class':'fmain', r, fill:'#f1efe6', stroke:'#8a8878', 'stroke-width':2.5 });
+        const nm = it.folder.length > 22 ? it.folder.slice(0, 21) + '…' : it.folder;
+        const hit = mk(g, 'g', { role:'button', tabindex:0, style:'cursor:pointer', 'aria-label':(it.closed ? 'Open folder ' : 'Close folder ') + it.folder });
+        const flip = () => { it.kids.forEach(k => { if (it.closed) delete k.d.fold; else k.d.fold = true; }); save(); renderHome(); };
+        hit.addEventListener('click', flip); hit.addEventListener('keydown', ev => { if (ev.key === 'Enter') flip(); });
+        if (it.closed){
+          mk(hit, 'circle', { r, fill:'transparent' });
+          mk(hit, 'text', { 'text-anchor':'middle', y:-6, 'font-size':16, 'font-weight':700, fill:'#1f2328' }, '▸ ' + nm);
+          mk(hit, 'text', { 'text-anchor':'middle', y:16, 'font-size':12.5, fill:'#5b636b' }, plural(it.kids.length, 'deck'));
+        } else {
+          mk(hit, 'rect', { x:-90, y:-r + 8, width:180, height:28, fill:'transparent' });
+          mk(hit, 'text', { 'text-anchor':'middle', y:-r + 28, 'font-size':15, 'font-weight':700, fill:'#1f2328' }, '▾ ' + nm);
+        }
+        mk(g, 'title', {}, it.folder + ' (folder)');
+        return;
+      }
+      const r = it.r, g = mk(svg, 'g', { 'class':'deck', transform:'translate(' + it.x + ',' + it.y + ')', role:'button', tabindex:0, style:'cursor:pointer' });
+      const go = () => it.add ? newDeck() : openDeck(it.i);
+      g.addEventListener('click', go); g.addEventListener('keydown', ev => { if (ev.key === 'Enter') go(); });
+      mk(g, 'circle', { 'class':'main', r, fill:it.add ? 'none' : '#fff', stroke:it.add ? '#9a9784' : '#b9b5a2', 'stroke-width':2, 'stroke-dasharray':it.add ? '7 6' : null });
+      if (it.add){ mk(g, 'text', { 'text-anchor':'middle', dy:'0.35em', 'font-size':15, fill:'#5b636b' }, '+ New deck'); return; }
+      const fs = Math.max(13, Math.min(20, r / 5)), max = Math.max(8, Math.floor((r * 1.5) / (fs * 0.56)));
+      const lines = []; let ln = '';
+      it.d.name.split(/\s+/).forEach(w => { if ((ln + ' ' + w).trim().length > max && ln){ lines.push(ln); ln = w; } else ln = (ln + ' ' + w).trim(); }); lines.push(ln);
+      const L = lines.slice(0, 3), t = mk(g, 'text', { 'text-anchor':'middle', 'font-size':fs, 'font-weight':700, fill:'#1f2328' });
+      const y0 = -(L.length * fs * 1.15) / 2 - 6;
+      L.forEach((l, k) => mk(t, 'tspan', { x:0, y:y0 + (k + 1) * fs * 1.15 }, l));
+      mk(g, 'text', { 'text-anchor':'middle', y:y0 + L.length * fs * 1.15 + 18, 'font-size':12.5, fill:'#5b636b' }, plural(it.d.items.length, 'box'));
+      mk(g, 'title', {}, it.d.name + (it.d.desc ? ' — ' + it.d.desc : ''));
+      const armed = armDel === it.i, x = mk(g, 'g', { 'class':'del' + (armed ? ' armed' : ''), transform:'translate(' + r * 0.7 + ',' + -r * 0.7 + ')', role:'button', 'aria-label':'Delete deck ' + it.d.name });
+      x.addEventListener('click', ev => { ev.stopPropagation(); if (!armed){ armDel = it.i; clearTimeout(armT); armT = setTimeout(() => { armDel = -1; renderHome(); }, 3000); renderHome(); } else { clearTimeout(armT); armDel = -1; state.lib.splice(it.i, 1); save(); renderHome(); } });
+      x.addEventListener('keydown', ev => ev.stopPropagation());
+      const cp = mk(g, 'g', { 'class':'cp', transform:'translate(' + -r * 0.7 + ',' + -r * 0.7 + ')', role:'button', 'aria-label':'Duplicate deck ' + it.d.name });
+      cp.addEventListener('click', ev => { ev.stopPropagation(); dupDeck(it.i); });
+      cp.addEventListener('keydown', ev => ev.stopPropagation());
+      mk(cp, 'circle', { r:11, fill:'#fff', stroke:'#b9b5a2' }); mk(cp, 'rect', { x:-6, y:-4, width:8, height:9, rx:1.5, fill:'none', stroke:'#5b636b', 'stroke-width':1.4 }); mk(cp, 'rect', { x:-2, y:-7, width:8, height:9, rx:1.5, fill:'#fff', stroke:'#5b636b', 'stroke-width':1.4 }); mk(cp, 'title', {}, 'Duplicate this deck');
+      if (armed){ mk(x, 'rect', { x:-56, y:-12, width:112, height:24, rx:12, fill:'#fff', stroke:'#a12626' }); mk(x, 'text', { 'text-anchor':'middle', dy:'0.35em', 'font-size':12.5, fill:'#a12626' }, 'Click to delete'); }
+      else { mk(x, 'circle', { r:11, fill:'#fff', stroke:'#b9b5a2' }); mk(x, 'text', { 'text-anchor':'middle', dy:'0.36em', 'font-size':16, fill:'#5b636b' }, '×'); mk(x, 'title', {}, 'Delete this deck'); }
+    });
+  }
+  function dupDeck(i){
+    const o = state.lib[i], c = JSON.parse(JSON.stringify(o)); let n = 1;
+    const nm = k => o.name + ' (copy' + (k > 1 ? ' ' + k : '') + ')';
+    while (state.lib.some(x => x.name === nm(n))) n++;
+    c.name = nm(n); state.lib.splice(i + 1, 0, c); save(); renderHome();
+  }
+  function newDeck(){
+    let n = 1; while (state.lib.some(d => d.name === 'Untitled deck' + (n > 1 ? ' ' + n : ''))) n++;
+    state.lib.push({ name:'Untitled deck' + (n > 1 ? ' ' + n : ''), desc:'', items:[], links:[] }); save(); openDeck(state.lib.length - 1);
+  }
+  window.addEventListener('resize', () => { if (state.ix < 0) renderHome(); });
+
+  // ---------- saving ----------
+  function download(name, text, mime){
+    try {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type:mime })); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); return true;
+    } catch(e){ return false; }
+  }
+  const slug = s => (s || 'deck').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'deck';
+  function pageCopy(){
+    const c = document.documentElement.cloneNode(true);
+    c.querySelector('#world').innerHTML = '<svg id="links"></svg>';
+    ['homeSvg', 'pal', 'bar', 'crumbs'].forEach(id => { const e = c.querySelector('#' + id); if (e) e.innerHTML = ''; });
+    const dn = c.querySelector('#deckName'); if (dn) dn.removeAttribute('value');
+    const menu = c.querySelector('#menu'); if (menu) menu.removeAttribute('open');
+    const sd = c.querySelector('#side'); if (sd) sd.classList.remove('open');
+    const seed = c.querySelector('#seed'), text = state.lib.map(d => toText(d, { layout:true })).join('\n\n\n');
+    if (/<\//.test(text)){ seed.setAttribute('data-b64', '1'); seed.textContent = toB64(text); } else { seed.removeAttribute('data-b64'); seed.textContent = text; }
+    c.querySelector('meta[name=file-id]').setAttribute('content', Math.random().toString(36).slice(2, 10));
+    return '<!DOCTYPE html>\n' + c.outerHTML;
+  }
+  function menuMsg(ok){ $('menuMsg').textContent = ok ? 'Saved to your downloads.' : 'The browser blocked the download here. Use Copy all decks in the Text tab instead.'; }
+  function dlDeckNow(fromMenu){
+    if (state.ix < 0) return;
+    const ok = download(slug(deck().name) + '.txt', toText(deck(), { layout:true }) + '\n', 'text/plain'); if (fromMenu) menuMsg(ok);
+    const n = $('savedNote'); if (n) n.textContent = ok ? 'Deck downloaded to your Downloads folder.' : 'This page cannot download files. Use the Text tab to copy your deck instead.';
+  }
+  $('dlDeck').onclick = () => dlDeckNow(true); $('dlDeck2').onclick = () => dlDeckNow(false);
+  $('menu').addEventListener('toggle', () => { if (!$('menu').open) $('menuMsg').textContent = ''; });
+  function savePage(){
+    const ok = download('spec-deck.html', pageCopy(), 'text/html');
+    menuMsg(ok); const n = $('savedNote'); if (n) n.textContent = ok ? 'Copy downloaded — look in your Downloads folder.' : 'This page cannot download files. Use the Text tab to copy your decks instead.';
+  }
+  // ---- save as image (PNG), drawn straight onto a canvas ----
+  function downloadBlob(name, blob){
+    try { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); return true; }
+    catch(e){ return false; }
+  }
+  function saveImage(rootId){
+    const d = deck(), hid = hiddenSet(d), m = mapOf(d), root = rootId ? byId(rootId) : null;
+    const set = (root ? [root, ...descendants(d, root)] : d.items).filter(i => !hid.has(i.id)), ids = new Set(set.map(i => i.id));
+    if (!set.length) return false;
+    const rs = set.map(vr), pad = 24;
+    const x0 = Math.min(...rs.map(r => r.x)) - pad, y0 = Math.min(...rs.map(r => r.y)) - pad;
+    const x1 = Math.max(...rs.map(r => r.x + r.w)) + pad, y1 = Math.max(...rs.map(r => r.y + r.h)) + pad;
+    const sc = Math.min(2, 3600 / Math.max(x1 - x0, y1 - y0)), cvs = document.createElement('canvas');
+    cvs.width = Math.round((x1 - x0) * sc); cvs.height = Math.round((y1 - y0) * sc);
+    const g = cvs.getContext('2d'), F = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    g.scale(sc, sc); g.translate(-x0, -y0); g.fillStyle = '#fff'; g.fillRect(x0, y0, x1 - x0, y1 - y0); g.textBaseline = 'top';
+    const rr = (r, rad) => { g.beginPath(); g.roundRect ? g.roundRect(r.x, r.y, r.w, r.h, rad) : g.rect(r.x, r.y, r.w, r.h); };
+    const wrap = (text, w) => { const out = []; String(text).split('\n').forEach(par => { let line = ''; par.split(/\s+/).forEach(wd => { const t = line ? line + ' ' + wd : wd; if (g.measureText(t).width > w && line){ out.push(line); line = wd; } else line = t; }); out.push(line); }); return out; };
+    const fit1 = (t, w) => { if (g.measureText(t).width <= w) return t; while (t.length > 1 && g.measureText(t + '…').width > w) t = t.slice(0, -1); return t + '…'; };
+    // containers first (largest underneath), then arrows, then cards and tiles
+    set.filter(i => i.kind === 'frame' && !i.collapsed).sort((a, b) => b.w * b.h - a.w * a.h).forEach(f => {
+      const r = vr(f), n = descendants(d, f).length;
+      rr(r, 12); g.fillStyle = '#f6f5f0'; g.fill(); g.setLineDash([7, 5]); g.strokeStyle = '#9a9784'; g.lineWidth = 2; g.stroke(); g.setLineDash([]);
+      g.fillStyle = colorOf(f) || '#ececE6'; g.beginPath(); g.roundRect ? g.roundRect(r.x + 1, r.y + 1, r.w - 2, FHEAD - 6, [11, 11, 0, 0]) : g.rect(r.x + 1, r.y + 1, r.w - 2, FHEAD - 6); g.fill();
+      g.fillStyle = '#1f2328'; g.font = '700 15px ' + F; const nm = fit1(f.name, r.w - 24); g.fillText(nm, r.x + 12, r.y + 8);
+      g.fillStyle = '#5b636b'; g.font = '12px ' + F; const meta = (f.step ? 'step ' + f.step + ' · ' : '') + (lab(f) ? lab(f) + ' · ' : '') + plural(n, 'box');
+      g.font = '700 15px ' + F; const nw = g.measureText(nm).width; g.font = '12px ' + F;
+      if (nw + 20 + g.measureText(meta).width < r.w - 12) g.fillText(meta, r.x + 12 + nw + 10, r.y + 10);
+    });
+    g.strokeStyle = '#3b4148'; g.fillStyle = '#3b4148';
+    d.links.forEach(l => {
+      const a0 = m.get(l.a), b0 = m.get(l.b); if (!a0 || !b0) return;
+      const a = proxyOf(m, a0), b = proxyOf(m, b0); if (a === b || !ids.has(a.id) || !ids.has(b.id)) return;
+      const ra = vr(a), rb = vr(b), p = edge(ra, { x:rb.x + rb.w / 2, y:rb.y + rb.h / 2 }), q = edge(rb, { x:ra.x + ra.w / 2, y:ra.y + ra.h / 2 });
+      g.lineWidth = 2.2; g.setLineDash((a !== a0 || b !== b0) ? [7, 5] : []); g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke(); g.setLineDash([]);
+      const ang = Math.atan2(q.y - p.y, q.x - p.x); g.beginPath(); g.moveTo(q.x, q.y); g.lineTo(q.x - 11 * Math.cos(ang - 0.4), q.y - 11 * Math.sin(ang - 0.4)); g.lineTo(q.x - 11 * Math.cos(ang + 0.4), q.y - 11 * Math.sin(ang + 0.4)); g.closePath(); g.fill();
+    });
+    set.filter(i => i.kind === 'card' || i.collapsed).forEach(it => {
+      const r = vr(it); g.save();
+      g.shadowColor = '#0003'; g.shadowBlur = 3; g.shadowOffsetY = 1; rr(r, 8); g.fillStyle = colorOf(it) || '#fff'; g.fill(); g.restore();
+      rr(r, 8); g.strokeStyle = it.collapsed ? '#8a8878' : '#0004'; g.lineWidth = it.collapsed ? 2 : 1; g.stroke();
+      g.save(); rr(r, 8); g.clip(); let y = r.y + 7;
+      const head = ((it.step ? 'step ' + it.step + ' ' : '') + showLab(it)).toUpperCase();
+      if (it.collapsed){
+        g.fillStyle = '#1f2328'; g.font = '700 15px ' + F; g.fillText('▸ ' + fit1(it.name, r.w - 30), r.x + 12, y + 3);
+        g.fillStyle = '#5b636b'; g.font = '12px ' + F; g.fillText((lab(it) ? lab(it) + ' · ' : '') + descendants(d, it).length ? plural(descendants(d, it).length, 'box') + ' inside' : '', r.x + 12, y + 26);
+      } else {
+        if (head){ g.fillStyle = '#5b636b'; g.font = '700 10px ' + F; g.fillText(head, r.x + 9, y); y += 14; }
+        g.fillStyle = '#1f2328'; g.font = '700 14px ' + F; wrap(it.name, r.w - 18).forEach(t => { g.fillText(t, r.x + 9, y); y += 18; });
+        if (it.text){ g.fillStyle = '#3b4148'; g.font = '12px ' + F; y += 2; wrap(it.text, r.w - 18).forEach(t => { if (y < r.y + r.h){ g.fillText(t, r.x + 9, y); } y += 15; }); }
+      }
+      g.restore();
+    });
+    let ok = false;
+    cvs.toBlob(b => { if (b) ok = downloadBlob(slug(d.name) + (root ? '-' + slug(root.name) : '') + '.png', b); }, 'image/png');
+    return true;
+  }
+  // ---- the deck as an SVG picture (every box open) for the notebook's first cell ----
+  function deckSVG(d0){
+    const d = JSON.parse(JSON.stringify(d0));
+    if (!d.items.length) return '';
+    { const old = rectsNow(d); d.items.forEach(i => { delete i.collapsed; }); reflow(d, old); settle(d); }
+    const rs = d.items.map(vr), pad = 20;
+    const x0 = Math.min(...rs.map(r => r.x)) - pad, y0 = Math.min(...rs.map(r => r.y)) - pad;
+    const W = Math.max(...rs.map(r => r.x + r.w)) + pad - x0, H = Math.max(...rs.map(r => r.y + r.h)) + pad - y0;
+    const g = document.createElement('canvas').getContext('2d'), F = 'sans-serif';
+    const X = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&apos;');
+    const wrap = (text, w, font) => { g.font = font; const out = []; String(text).split('\n').forEach(par => { let line = ''; par.split(/\s+/).filter(Boolean).forEach(wd => { while (g.measureText(wd).width > w && wd.length > 1){ let k = wd.length - 1; while (k > 1 && g.measureText(wd.slice(0, k)).width > w) k--; if (line){ out.push(line); line = ''; } out.push(wd.slice(0, k)); wd = wd.slice(k); } const t2 = line ? line + ' ' + wd : wd; if (g.measureText(t2).width > w && line){ out.push(line); line = wd; } else line = t2; }); out.push(line); }); return out; };
+    const fit1 = (t2, w, font) => { g.font = font; if (g.measureText(t2).width <= w) return t2; while (t2.length > 1 && g.measureText(t2 + '…').width > w) t2 = t2.slice(0, -1); return t2 + '…'; };
+    const n = v => Math.round(v), tx = (x, y, s, size, wt, fill) => "<text x='" + n(x) + "' y='" + n(y) + "' font-size='" + size + "'" + (wt ? " font-weight='bold'" : '') + " fill='" + fill + "'>" + X(s) + '</text>';
+    const o = [];
+    o.push("<svg xmlns='http://www.w3.org/2000/svg' width='" + n(Math.min(W, 1000)) + "' height='" + n(Math.min(W, 1000) * H / W) + "' viewBox='" + n(x0) + ' ' + n(y0) + ' ' + n(W) + ' ' + n(H) + "' font-family='" + F + "'>");
+    o.push("<defs><marker id='ah' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='8' markerHeight='8' orient='auto'><path d='M0,0L10,5L0,10z' fill='#3b4148'/></marker></defs>");
+    o.push("<rect x='" + n(x0) + "' y='" + n(y0) + "' width='" + n(W) + "' height='" + n(H) + "' fill='#ffffff'/>");
+    d.items.filter(i => i.kind === 'frame').sort((a, b) => b.w * b.h - a.w * a.h).forEach(f => {
+      const r = vr(f), cnt = descendants(d, f).length, nm = fit1(f.name, r.w - 24, 'bold 15px ' + F);
+      o.push("<rect x='" + n(r.x) + "' y='" + n(r.y) + "' width='" + n(r.w) + "' height='" + n(r.h) + "' rx='12' fill='#f6f5f0' stroke='#9a9784' stroke-width='2' stroke-dasharray='7 5'/>");
+      o.push("<rect x='" + n(r.x + 1) + "' y='" + n(r.y + 1) + "' width='" + n(r.w - 2) + "' height='" + (FHEAD - 6) + "' rx='10' fill='" + (colorOf(f) || '#ececE6') + "'/>");
+      o.push(tx(r.x + 12, r.y + 22, nm, 15, 1, '#1f2328'));
+      g.font = 'bold 15px ' + F; const nw = g.measureText(nm).width, meta = (f.step ? 'step ' + f.step + ' · ' : '') + (lab(f) ? lab(f) + ' · ' : '') + plural(cnt, 'box');
+      g.font = '12px ' + F; if (nw + 20 + g.measureText(meta).width < r.w - 12) o.push(tx(r.x + 22 + nw, r.y + 22, meta, 12, 0, '#5b636b'));
+      if ((f.text || '').trim()){ let y = r.y + FHEAD + 12; wrap(f.text, r.w - 24, '12px ' + F).forEach(l => { if (y < r.y + hdOf(f)){ o.push(tx(r.x + 12, y, l, 12, 0, '#3b4148')); } y += 15; }); }
+    });
+    const m = mapOf(d);
+    d.links.forEach(l => {
+      const a = m.get(l.a), b = m.get(l.b); if (!a || !b || a === b) return;
+      const ra = vr(a), rb = vr(b), p = edge(ra, { x:rb.x + rb.w / 2, y:rb.y + rb.h / 2 }), q = edge(rb, { x:ra.x + ra.w / 2, y:ra.y + ra.h / 2 });
+      o.push("<line x1='" + n(p.x) + "' y1='" + n(p.y) + "' x2='" + n(q.x) + "' y2='" + n(q.y) + "' stroke='#3b4148' stroke-width='2.2' marker-end='url(#ah)'/>");
+    });
+    d.items.filter(i => i.kind === 'card').forEach(it => {
+      const r = vr(it), head = ((it.step ? 'step ' + it.step + ' ' : '') + showLab(it)).toUpperCase();
+      o.push("<rect x='" + n(r.x) + "' y='" + n(r.y) + "' width='" + n(r.w) + "' height='" + n(r.h) + "' rx='8' fill='" + (colorOf(it) || '#ffffff') + "' stroke='#888888' stroke-width='1'/>");
+      let y = r.y + 8;
+      if (head){ o.push(tx(r.x + 9, y + 9, head, 10, 1, '#5b636b')); y += 14; }
+      wrap(it.name, r.w - 18, 'bold 14px ' + F).forEach(l => { if (y + 13 < r.y + r.h){ o.push(tx(r.x + 9, y + 13, l, 14, 1, '#1f2328')); } y += 18; });
+      if (it.text){ y += 2; wrap(it.text, r.w - 18, '12px ' + F).forEach(l => { if (y + 11 < r.y + r.h){ o.push(tx(r.x + 9, y + 11, l, 12, 0, '#3b4148')); } y += 15; }); }
+    });
+    o.push('</svg>');
+    return o.join('\n');
+  }
+  $('dlImg').onclick = () => { if (state.ix < 0) return; saveImage(null); $('menuMsg').textContent = 'Image saved to your downloads (if your browser allows downloads here).'; };
+  $('dlPage').onclick = savePage; $('saveBtn').onclick = savePage;
+
+  // ---------- bridge: when this page sits inside another page (a notebook cell), keep that page's copy of the decks current ----------
+  const embedded = window.parent !== window;
+  let lastSent = null, live = false;
+  function allText(){ return state.lib.map(d => toText(d, { layout:true })).join('\n\n\n'); }
+  function bridgeOut(){
+    if (!embedded || !live || !state.lib) return;
+    try { const t = allText(); if (t !== lastSent){ lastSent = t; window.parent.postMessage({ specdeck:'decks', text:t }, '*'); } } catch(e){}
+  }
+  window.addEventListener('message', e => {
+    const m = e.data; if (!m || m.specdeck !== 'load' || typeof m.text !== 'string') return;
+    if (!m.text.trim()){ live = true; bridgeOut(); return; }
+    try {
+      const lib = parseText(m.text).map(deckFromParsed); if (!lib.length) return;
+      live = true; state.lib = lib; lastSent = m.text; state.ix = -1; state.sel = null; save(); if (lib.length === 1) openDeck(0); else showView();
+    } catch(err){}
+  });
+  // ---------- boot ----------
+  buildPalette();
+  state.lib = loadLib(); state.ix = -1;
+  // an empty file opens onto a blank canvas; a file with exactly one deck opens that deck
+  function boot(){ if (!state.lib.length) newDeck(); else if (state.lib.length === 1) openDeck(0); else showView(); }
+  boot();
+  if (embedded){ window.parent.postMessage({ specdeck:'ready' }, '*'); setTimeout(() => { if (!live){ live = true; } }, 3000); }
+})();
+</script>
+</body>
+</html>
