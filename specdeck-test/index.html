@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish-test">
-<meta name="build" content="2s-test-1126">
+<meta name="build" content="2t-test-1126">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -199,7 +199,7 @@
   <div id="work">
     <div id="cv" aria-label="Canvas">
       <div id="world"><svg id="links"></svg></div>
-      <div id="empty"><div><button class="btn primary" id="startBtn">Start with Goal, Data, Process, Data viz</button><p>or double-click anywhere to add a box</p></div></div>
+      <div id="empty"><div><button class="btn primary" id="startBtn">Start with Goal, Data, Process, Data viz</button><p>or double-click anywhere to add a box</p><button class="btn" id="restoreBtn" hidden></button></div></div>
       <div id="bar" hidden></div>
       <div id="addbar"><button class="btn primary" id="addCard" title="Add a box next to the selected one (or double-click empty canvas)">+ Box</button></div>
       <div id="zoomctl"><button class="btn" id="zo" aria-label="Zoom out">−</button><span id="zl">100%</span><button class="btn" id="zi" aria-label="Zoom in">+</button><button class="btn" id="fit">Fit</button><button class="btn" id="colAll" title="Collapse every box that has others inside">Collapse all</button><button class="btn" id="expAll" title="Expand every box">Expand all</button></div>
@@ -576,9 +576,17 @@
   function save(){
     bridgeOut();
     // inside a notebook the notebook is the only home for the decks: browser storage is not read or written
-    if (IN_NB){ const n = $('savedNote'); if (n) n.textContent = 'Kept in this notebook · save the notebook'; return; }
+    if (IN_NB){ backUp(); const n = $('savedNote'); if (n) n.textContent = 'Kept in this notebook · save the notebook'; return; }
     try { localStorage.setItem(KEY, JSON.stringify(state.lib)); const n = $('savedNote'); if (n) n.textContent = 'Saved in this browser only · ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){}
   }
+  // a spare copy for the notebook version: never loaded by itself, only offered on a blank canvas
+  const BACKUP = 'specdeck-nb-backup';
+  function backUp(){
+    // a blank deck, or the untouched starter boxes, never replaces the spare copy
+    if (!state.lib.some(d => d.items.some(it => (it.text || '').trim() || ((it.name || '').trim() && !/^Name this/.test(it.name))))) return;
+    try { localStorage.setItem(BACKUP, JSON.stringify({ text:allText(), at:Date.now() })); } catch(e){}
+  }
+  function readBackup(){ try { const b = JSON.parse(localStorage.getItem(BACKUP)); return b && b.text ? b : null; } catch(e){ return null; } }
   function loadLib(){
     if (IN_NB) return seedDecks();
     try { const s = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(s) && s.length && s.every(d => Array.isArray(d.items))){ s.forEach(d => { migrateDeck(d); settle(d); }); return s; } } catch(e){}
@@ -1644,6 +1652,19 @@
     $('mode').options[0].textContent = 'Write the whole notebook (every box)';
     $('hdr').checked = true; $('lay').checked = false;
     ['hdr','lay'].forEach(k => $(k).parentNode.style.display = 'none');
+  }
+  if (IN_NB){
+    const b = readBackup();
+    if (b){
+      const btn = $('restoreBtn');
+      btn.textContent = 'Bring back my last deck (' + new Date(b.at).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) + ')';
+      btn.hidden = false;
+      btn.onclick = e => {
+        e.stopPropagation();
+        const lib = parseText(b.text).map(deckFromParsed); if (!lib.length) return;
+        state.lib = lib; state.ix = -1; state.sel = null; save(); if (lib.length === 1) openDeck(0); else showView();
+      };
+    }
   }
   buildPalette();
   state.lib = loadLib(); state.ix = -1;
