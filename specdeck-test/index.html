@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish-test">
-<meta name="build" content="2q-test-1126">
+<meta name="build" content="2s-test-1126">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -252,6 +252,10 @@
   const CHANGE_REQUEST = KIT.changeRequest.join('\n');
   const requestText = ct => { const i = REQUEST.indexOf('\n- Make the first cell'); return ct ? REQUEST.slice(0, i) + '\n' + CT_NOTE + REQUEST.slice(i) : REQUEST; };
   const $ = id => document.getElementById(id);
+  // inside a notebook: the deck already shows live in the notebook, so the AI must not draw another picture of it
+  const IN_NB = window.parent !== window && new URLSearchParams(location.search).has('nb');   // the notebook cell adds ?nb=1
+  const forNotebook = t => t.split('\n').filter(l => !l.startsWith('- DIAGRAM (SVG)'))
+    .map(l => l.startsWith('- Make the first cell') ? '- My notebook is already open and its first cell already shows this deck. Do not draw a diagram or picture of the deck, do not change or remove that first cell, and add your cells after the ones already in my notebook. Do not put the deck text itself in the notebook.' : l.replace(' It is only useful for placing boxes in the diagram.', '')).join('\n');
   // Label -> color. The color is never stored: it always follows the label word.
   const LABELS = KIT.labels;
   const ALIAS = KIT.alias;
@@ -572,11 +576,11 @@
   function save(){
     bridgeOut();
     // inside a notebook the notebook is the only home for the decks: browser storage is not read or written
-    if (window.parent !== window){ const n = $('savedNote'); if (n) n.textContent = 'Kept in this notebook · save the notebook'; return; }
+    if (IN_NB){ const n = $('savedNote'); if (n) n.textContent = 'Kept in this notebook · save the notebook'; return; }
     try { localStorage.setItem(KEY, JSON.stringify(state.lib)); const n = $('savedNote'); if (n) n.textContent = 'Saved in this browser only · ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){}
   }
   function loadLib(){
-    if (window.parent !== window) return seedDecks();
+    if (IN_NB) return seedDecks();
     try { const s = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(s) && s.length && s.every(d => Array.isArray(d.items))){ s.forEach(d => { migrateDeck(d); settle(d); }); return s; } } catch(e){}
     return seedDecks();
   }
@@ -1251,8 +1255,8 @@
       return CELL_REQUEST + '\n\nTHE BOX TO WRITE A CELL FOR: ' + target.name + vl + dk;
     }
     const notes = $('hdr').checked ? layoutNotes(d) : '';
-    const svg = $('hdr').checked ? deckSVG(d) : '';
-    return ($('hdr').checked ? requestText($('ct').checked) + '\n\n' + (notes ? 'LAYOUT (how the boxes are arranged on my canvas)\n' + notes + '\n\n' : '') : '') + toText(d, o) + (svg ? '\n\nDIAGRAM (SVG)\n' + svg : '');
+    const svg = $('hdr').checked && !IN_NB ? deckSVG(d) : '';
+    return ($('hdr').checked ? (IN_NB ? forNotebook(requestText($('ct').checked)) : requestText($('ct').checked)) + '\n\n' + (notes ? 'LAYOUT (how the boxes are arranged on my canvas)\n' + notes + '\n\n' : '') : '') + toText(d, o) + (svg ? '\n\nDIAGRAM (SVG)\n' + svg : '');
   }
   let outEdited = false;
   function refreshText(){
@@ -1355,7 +1359,7 @@
   $('deckFolder').addEventListener('input', e => { if (state.ix < 0) return; const v = e.target.value.trim(); if (v) deck().folder = v; else delete deck().folder; });
   $('deckFolder').addEventListener('change', () => { const b = $('deckFolder')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
   $('deckName').addEventListener('change', e => { const b = $('deckName')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
-  $('reset').onclick = () => { try { if (window.parent === window) localStorage.removeItem(KEY); } catch(e){} state.lib = seedDecks(); state.ix = -1; state.sel = null; $('menu').open = false; boot(); };
+  $('reset').onclick = () => { try { if (!IN_NB) localStorage.removeItem(KEY); } catch(e){} state.lib = seedDecks(); state.ix = -1; state.sel = null; $('menu').open = false; boot(); };
   armDelete($('delDeck'), () => {
     if (state.ix < 0) return;
     state.lib.splice(state.ix, 1); state.ix = -1; $('menu').open = false; save(); showView();
@@ -1376,6 +1380,11 @@
     $('delDeck').style.display = home ? 'none' : '';
     $('dlDeck').style.display = home ? 'none' : '';
     $('dlImg').style.display = home ? 'none' : '';
+    if (IN_NB){
+      ['deckFolder','dlDeck2','saveBtn','reset','impBtn','impList','dlDeck','dlPage'].forEach(k => $(k).style.display = 'none');
+      // a notebook normally holds one deck; if it holds more, keep the way to reach and delete them
+      if (state.lib.length <= 1){ $('homeBtn').style.display = 'none'; $('delDeck').style.display = 'none'; }
+    }
     if (home){ renderHome(); return; }
     els.forEach(el => el.remove()); els.clear();
     renderAll(); requestAnimationFrame(fit);
@@ -1630,6 +1639,12 @@
     } catch(err){}
   });
   // ---------- boot ----------
+  if (IN_NB){
+    [...$('mode').options].forEach(o => { if (['selection','titles','json'].includes(o.value)) o.remove(); });
+    $('mode').options[0].textContent = 'Write the whole notebook (every box)';
+    $('hdr').checked = true; $('lay').checked = false;
+    ['hdr','lay'].forEach(k => $(k).parentNode.style.display = 'none');
+  }
   buildPalette();
   state.lib = loadLib(); state.ix = -1;
   // an empty file opens onto a blank canvas; a file with exactly one deck opens that deck
