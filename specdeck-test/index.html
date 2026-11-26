@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="file-id" content="poolish-test">
-<meta name="build" content="2p-test-1124">
+<meta name="build" content="2q-test-1126">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spec Deck</title>
 <style>
@@ -571,9 +571,12 @@
   // ================= persistence + history =================
   function save(){
     bridgeOut();
+    // inside a notebook the notebook is the only home for the decks: browser storage is not read or written
+    if (window.parent !== window){ const n = $('savedNote'); if (n) n.textContent = 'Kept in this notebook · save the notebook'; return; }
     try { localStorage.setItem(KEY, JSON.stringify(state.lib)); const n = $('savedNote'); if (n) n.textContent = 'Saved in this browser only · ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){}
   }
   function loadLib(){
+    if (window.parent !== window) return seedDecks();
     try { const s = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(s) && s.length && s.every(d => Array.isArray(d.items))){ s.forEach(d => { migrateDeck(d); settle(d); }); return s; } } catch(e){}
     return seedDecks();
   }
@@ -1352,7 +1355,7 @@
   $('deckFolder').addEventListener('input', e => { if (state.ix < 0) return; const v = e.target.value.trim(); if (v) deck().folder = v; else delete deck().folder; });
   $('deckFolder').addEventListener('change', () => { const b = $('deckFolder')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
   $('deckName').addEventListener('change', e => { const b = $('deckName')._b; if (b && snap() !== b) pushHist(b); save(); refreshText(); });
-  $('reset').onclick = () => { try { localStorage.removeItem(KEY); } catch(e){} state.lib = seedDecks(); state.ix = -1; state.sel = null; $('menu').open = false; boot(); };
+  $('reset').onclick = () => { try { if (window.parent === window) localStorage.removeItem(KEY); } catch(e){} state.lib = seedDecks(); state.ix = -1; state.sel = null; $('menu').open = false; boot(); };
   armDelete($('delDeck'), () => {
     if (state.ix < 0) return;
     state.lib.splice(state.ix, 1); state.ix = -1; $('menu').open = false; save(); showView();
